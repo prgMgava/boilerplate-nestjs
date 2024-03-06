@@ -8,7 +8,6 @@
 - [Drivers support](#drivers-support)
 - [Uploading and attach file flow](#uploading-and-attach-file-flow)
   - [An example of uploading an avatar to a user profile](#an-example-of-uploading-an-avatar-to-a-user-profile)
-  - [Video example](#video-example)
 - [How to delete files?](#how-to-delete-files)
 
 ---
@@ -41,10 +40,6 @@ sequenceDiagram
     note left of A: Attach File entity to User entity
     A->>B: Update user via PATCH /api/v1/auth/me
 ```
-
-### Video example
-
-<https://user-images.githubusercontent.com/6001723/224558636-d22480e4-f70a-4789-b6fc-6ea343685dc7.mp4>
 
 ## How to delete files?
 

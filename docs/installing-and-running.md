@@ -11,7 +11,6 @@ Switching between TypeORM and Mongoose is implemented based on the [Dependency I
 - [Comfortable development (PostgreSQL + TypeORM)](#comfortable-development-postgresql--typeorm)
 - [Comfortable development (MongoDB + Mongoose)](#comfortable-development-mongodb--mongoose)
 - [Quick run (PostgreSQL + TypeORM)](#quick-run-postgresql--typeorm)
-  - [Video guideline](#video-guideline)
 - [Quick run (MongoDB + Mongoose)](#quick-run-mongodb--mongoose)
 - [Links](#links)
 
@@ -22,7 +21,7 @@ Switching between TypeORM and Mongoose is implemented based on the [Dependency I
 1. Clone repository
 
    ```bash
-   git clone --depth 1 https://github.com/brocoders/nestjs-boilerplate.git my-app
+   git clone --depth 1 'TODO: add remote git repo' my-app
    ```
 
 1. Go to folder, and copy `env-example-relational` as `.env`.
@@ -75,7 +74,7 @@ Switching between TypeORM and Mongoose is implemented based on the [Dependency I
 1. Clone repository
 
    ```bash
-   git clone --depth 1 https://github.com/brocoders/nestjs-boilerplate.git my-app
+   git clone --depth 1 "TODO: add remote repo url" my-app
    ```
 
 1. Go to folder, and copy `env-example-document` as `.env`.
@@ -122,7 +121,7 @@ If you want quick run your app, you can use following commands:
 1. Clone repository
 
    ```bash
-   git clone --depth 1 https://github.com/brocoders/nestjs-boilerplate.git my-app
+   git clone --depth 1 "TODO: add remote repo url" my-app
    ```
 
 1. Go to folder, and copy `env-example-relational` as `.env`.
@@ -146,12 +145,6 @@ If you want quick run your app, you can use following commands:
 
 1. Open <http://localhost:3000>
 
-### Video guideline
-
-<https://user-images.githubusercontent.com/6001723/235758846-d7d97de8-dea9-46d8-ae12-8cc6b76df03d.mp4>
-
----
-
 ## Quick run (MongoDB + Mongoose)
 
 If you want quick run your app, you can use following commands:
@@ -159,7 +152,7 @@ If you want quick run your app, you can use following commands:
 1. Clone repository
 
    ```bash
-   git clone --depth 1 https://github.com/brocoders/nestjs-boilerplate.git my-app
+   git clone --depth 1 "TODO: add remote repo url" my-app
    ```
 
 1. Go to folder, and copy `env-example-document` as `.env`.

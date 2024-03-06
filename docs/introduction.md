@@ -2,9 +2,9 @@
 
 ## Online demo
 
-Demo: <https://nestjs-boilerplate-test.herokuapp.com/docs>
+Demo: TODO: deploy app
 
-Frontend (React, Next.js): <https://github.com/brocoders/extensive-react-boilerplate>
+Frontend (React, Next.js): TODO: guild front end boilerplate
 
 ## Features
 

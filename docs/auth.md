@@ -11,7 +11,6 @@
 - [Auth via Google](#auth-via-google)
 - [Auth via Twitter](#auth-via-twitter)
 - [Refresh token flow](#refresh-token-flow)
-  - [Video example](#video-example)
 - [Logout](#logout)
 
 ---
@@ -32,8 +31,6 @@ sequenceDiagram
     B->>A: 3. Get a JWT token
     A->>B: 4. Make any requests using a JWT token
 ```
-
-<https://user-images.githubusercontent.com/6001723/224566194-1c1f4e98-5691-4703-b30e-92f99ec5d929.mp4>
 
 ### Auth via external services or social networks flow
 
@@ -101,6 +98,7 @@ For auth with external services or social networks you need:
    <img alt="image" src="https://github.com/brocoders/nestjs-boilerplate/assets/6001723/05721db2-9d26-466a-ad7a-072680d0d49b">
 
    <img alt="image" src="https://github.com/brocoders/nestjs-boilerplate/assets/6001723/9f4aae18-61da-4abc-9304-821a0995a306">
+
 2. Go to `Settings` -> `Basic` and get `App ID` and `App Secret` from your app
    <img alt="image" src="https://github.com/brocoders/nestjs-boilerplate/assets/6001723/b0fc7d50-4bc6-45d0-8b20-fda0b6c01ac2">
 3. Change `FACEBOOK_APP_ID` and `FACEBOOK_APP_SECRET` in `.env`
@@ -135,10 +133,6 @@ For auth with external services or social networks you need:
 1. On sign in (`POST /api/v1/auth/email/login`) you will receive `token`, `tokenExpires` and `refreshToken` in response.
 1. On each regular request you need to send `token` in `Authorization` header.
 1. If `token` is expired (check with `tokenExpires` property on client app) you need to send `refreshToken` to `POST /api/v1/auth/refresh` in `Authorization` header to refresh `token`. You will receive new `token`, `tokenExpires` and `refreshToken` in response.
-
-### Video example
-
-https://github.com/brocoders/nestjs-boilerplate/assets/6001723/f6fdcc89-5ec6-472b-a6fc-d24178ad1bbb
 
 ## Logout
 
