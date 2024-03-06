@@ -13,6 +13,8 @@ describe('Users admin (e2e)', () => {
   const newUserByAdminPasswordFirst = `secret`;
   let apiToken;
 
+  //TODO: renase tests to allow cookie-based session
+
   beforeAll(async () => {
     await request(app)
       .post('/api/v1/auth/email/login')
