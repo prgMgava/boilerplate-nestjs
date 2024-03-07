@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
 import { EntityCondition } from '@utils/types/entity-condition.type';
 import { NullableType } from '@utils/types/nullable.type';
 

@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+
+import bcrypt from 'bcryptjs';
+import { Model } from 'mongoose';
+
 import { RoleEnum } from '@roles/roles.enum';
 import { StatusEnum } from '@statuses/statuses.enum';
 import { UserSchemaClass } from '@users/infrastructure/persistence/document/entities/user.schema';
-import bcrypt from 'bcryptjs';
-import { Model } from 'mongoose';
 
 @Injectable()
 export class UserSeedService {

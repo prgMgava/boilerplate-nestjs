@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
 import { Facebook } from 'fb';
 
 import { AllConfigType } from '@config/config.type';

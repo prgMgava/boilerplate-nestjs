@@ -1,7 +1,8 @@
-import fs from 'node:fs/promises';
-
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
+import fs from 'node:fs/promises';
+
 import Handlebars from 'handlebars';
 import nodemailer from 'nodemailer';
 

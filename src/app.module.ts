@@ -1,9 +1,10 @@
-import path from 'path';
-
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import path from 'path';
+
 import { HeaderResolver } from 'nestjs-i18n';
 import { I18nModule } from 'nestjs-i18n/dist/i18n.module';
 import { DataSource, DataSourceOptions } from 'typeorm';

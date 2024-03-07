@@ -1,6 +1,7 @@
+import { ConfigService } from '@nestjs/config';
+
 import fs from 'fs';
 
-import { ConfigService } from '@nestjs/config';
 import { createLogger, format, Logger, transports } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 

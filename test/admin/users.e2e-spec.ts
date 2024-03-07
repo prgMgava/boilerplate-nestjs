@@ -1,6 +1,7 @@
+import request from 'supertest';
+
 import { RoleEnum } from '@roles/roles.enum';
 import { StatusEnum } from '@statuses/statuses.enum';
-import request from 'supertest';
 
 import { ADMIN_EMAIL, ADMIN_PASSWORD, APP_URL } from '../utils/constants';
 

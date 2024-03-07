@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { RoleDto } from '@roles/dto/role.dto';
+
 import { plainToInstance, Transform, Type } from 'class-transformer';
 import {
   IsNumber,
@@ -7,6 +7,8 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator';
+
+import { RoleDto } from '@roles/dto/role.dto';
 
 import { User } from '../domain/user';
 

@@ -1,7 +1,9 @@
-import { MailModule } from '@mail/mail.module';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+
+import { MailModule } from '@mail/mail.module';
+
 import { SessionModule } from '@session/session.module';
 import { UsersModule } from '@users/users.module';
 

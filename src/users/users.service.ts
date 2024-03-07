@@ -1,12 +1,14 @@
-import { AuthProvidersEnum } from '@auth/auth-providers.enum';
-import { FilesService } from '@files/files.service';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { RoleEnum } from '@roles/roles.enum';
-import { StatusEnum } from '@statuses/statuses.enum';
+
 import { DeepPartial } from '@utils/types/deep-partial.type';
 import { EntityCondition } from '@utils/types/entity-condition.type';
 import { IPaginationOptions } from '@utils/types/pagination-options';
 import bcrypt from 'bcryptjs';
+
+import { AuthProvidersEnum } from '@auth/auth-providers.enum';
+import { FilesService } from '@files/files.service';
+import { RoleEnum } from '@roles/roles.enum';
+import { StatusEnum } from '@statuses/statuses.enum';
 
 import { NullableType } from '../utils/types/nullable.type';
 import { User } from './domain/user';

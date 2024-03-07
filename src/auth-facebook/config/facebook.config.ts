@@ -1,6 +1,8 @@
-import { FacebookConfig } from '@auth-facebook/config/facebook-config.type';
 import { registerAs } from '@nestjs/config';
+
 import { IsOptional, IsString } from 'class-validator';
+
+import { FacebookConfig } from '@auth-facebook/config/facebook-config.type';
 
 import validateConfig from '../../utils/validate-config';
 

@@ -1,7 +1,8 @@
+import { Exclude, Expose } from 'class-transformer';
+
 import { FileType } from '@files/domain/file';
 import { Role } from '@roles/domain/role';
 import { Status } from '@statuses/domain/status';
-import { Exclude, Expose } from 'class-transformer';
 
 export class User {
   createdAt: Date;

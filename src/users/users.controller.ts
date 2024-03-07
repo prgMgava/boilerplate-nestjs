@@ -14,8 +14,10 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
-import { RolesGuard } from '@roles/roles.guard';
+
 import { infinityPagination } from '@utils/infinity-pagination';
+
+import { RolesGuard } from '@roles/roles.guard';
 
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../roles/roles.enum';

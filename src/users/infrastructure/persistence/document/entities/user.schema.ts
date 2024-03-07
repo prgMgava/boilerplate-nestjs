@@ -1,14 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
 // We use class-transformer in schema and domain entity.
+import { EntityDocumentHelper } from '@utils/document-entity-helper';
+// in your project and return an schema entity directly in response.
+import { Exclude, Expose, Type } from 'class-transformer';
+import { HydratedDocument, now } from 'mongoose';
+
 // We duplicate these rules because you can choose not to use adapters
 import { AuthProvidersEnum } from '@auth/auth-providers.enum';
 import { FileSchemaClass } from '@files/infrastructure/persistence/document/entities/file.schema';
 import { Role } from '@roles/domain/role';
 import { Status } from '@statuses/domain/status';
-import { EntityDocumentHelper } from '@utils/document-entity-helper';
-// in your project and return an schema entity directly in response.
-import { Exclude, Expose, Type } from 'class-transformer';
-import { HydratedDocument, now } from 'mongoose';
 
 export type UserSchemaDocument = HydratedDocument<UserSchemaClass>;
 

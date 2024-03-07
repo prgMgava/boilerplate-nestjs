@@ -1,5 +1,5 @@
-import { MailConfig } from '@mail/config/mail-config.type';
 import { registerAs } from '@nestjs/config';
+
 import {
   IsBoolean,
   IsEmail,
@@ -9,6 +9,8 @@ import {
   Max,
   Min,
 } from 'class-validator';
+
+import { MailConfig } from '@mail/config/mail-config.type';
 
 import validateConfig from '../../utils/validate-config';
 

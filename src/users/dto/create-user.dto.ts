@@ -1,10 +1,12 @@
-import { FileDto } from '@files/dto/file.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { RoleDto } from '@roles/dto/role.dto';
-import { StatusDto } from '@statuses/dto/status.dto';
+
 import { lowerCaseTransformer } from '@utils/transformers/lower-case.transformer';
 import { Transform, Type } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsOptional, MinLength } from 'class-validator';
+
+import { FileDto } from '@files/dto/file.dto';
+import { RoleDto } from '@roles/dto/role.dto';
+import { StatusDto } from '@statuses/dto/status.dto';
 
 export class CreateUserDto {
   @ApiProperty({ example: 'test1@example.com' })

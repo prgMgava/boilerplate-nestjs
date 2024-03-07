@@ -1,8 +1,9 @@
-import { FilesModule } from '@files/files.module';
 import { Module } from '@nestjs/common';
 
 import { DatabaseConfig } from '@database/config/database-config.type';
 import databaseConfig from '@database/config/database.config';
+
+import { FilesModule } from '@files/files.module';
 
 import { DocumentUserPersistenceModule } from './infrastructure/persistence/document/document-persistence.module';
 import { RelationalUserPersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';

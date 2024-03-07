@@ -1,8 +1,9 @@
-import { S3Client } from '@aws-sdk/client-s3';
 import { HttpException, HttpStatus, Module } from '@nestjs/common';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MulterModule } from '@nestjs/platform-express';
+
+import { S3Client } from '@aws-sdk/client-s3';
 import { diskStorage } from 'multer';
 import multerS3 from 'multer-s3';
 

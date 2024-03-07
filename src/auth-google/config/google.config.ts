@@ -1,6 +1,8 @@
-import { GoogleConfig } from '@auth-google/config/google-config.type';
 import { registerAs } from '@nestjs/config';
+
 import { IsOptional, IsString } from 'class-validator';
+
+import { GoogleConfig } from '@auth-google/config/google-config.type';
 
 import validateConfig from '../../utils/validate-config';
 

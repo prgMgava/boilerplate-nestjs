@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
 import { User } from '@users/domain/user';
 
 import { NullableType } from '../utils/types/nullable.type';

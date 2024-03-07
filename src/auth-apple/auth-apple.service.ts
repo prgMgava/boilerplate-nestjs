@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
 import appleSigninAuth from 'apple-signin-auth';
 
 import { AllConfigType } from '@config/config.type';

@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
 import { EntityDocumentHelper } from '@utils/document-entity-helper';
 import { HydratedDocument } from 'mongoose';
 

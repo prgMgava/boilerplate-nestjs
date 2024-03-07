@@ -1,4 +1,3 @@
-import { MailService } from '@mail/mail.service';
 import {
   HttpException,
   HttpStatus,
@@ -7,6 +6,14 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+
+import bcrypt from 'bcryptjs';
+import ms from 'ms';
+
+import { AllConfigType } from '@config/config.type';
+
+import { MailService } from '@mail/mail.service';
+
 import { RoleEnum } from '@roles/roles.enum';
 import { Session } from '@session/domain/session';
 import { SessionService } from '@session/session.service';
@@ -14,10 +21,6 @@ import { SocialInterface } from '@social/interfaces/social.interface';
 import { StatusEnum } from '@statuses/statuses.enum';
 import { User } from '@users/domain/user';
 import { UsersService } from '@users/users.service';
-import bcrypt from 'bcryptjs';
-import ms from 'ms';
-
-import { AllConfigType } from '@config/config.type';
 
 import { NullableType } from '../utils/types/nullable.type';
 import { AuthProvidersEnum } from './auth-providers.enum';

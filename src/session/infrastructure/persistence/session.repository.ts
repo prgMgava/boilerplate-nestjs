@@ -1,5 +1,6 @@
-import { User } from '@users/domain/user';
 import { EntityCondition } from '@utils/types/entity-condition.type';
+
+import { User } from '@users/domain/user';
 
 import { NullableType } from '../../../utils/types/nullable.type';
 import { Session } from '../../domain/session';

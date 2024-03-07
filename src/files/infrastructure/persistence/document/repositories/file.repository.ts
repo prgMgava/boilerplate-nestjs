@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+
 import { EntityCondition } from '@utils/types/entity-condition.type';
 import { NullableType } from '@utils/types/nullable.type';
 import { Model } from 'mongoose';

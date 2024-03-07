@@ -1,7 +1,8 @@
-import path from 'path';
-
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
+import path from 'path';
+
 import { I18nContext } from 'nestjs-i18n';
 
 import { AllConfigType } from '@config/config.type';

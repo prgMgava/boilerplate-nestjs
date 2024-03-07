@@ -1,5 +1,4 @@
 // We use class-transformer in ORM entity and domain entity.
-import { AuthProvidersEnum } from '@auth/auth-providers.enum';
 import { EntityRelationalHelper } from '@utils/relational-entity-helper';
 // We duplicate these rules because you can choose not to use adapters
 import { Exclude, Expose } from 'class-transformer';
@@ -14,6 +13,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { AuthProvidersEnum } from '@auth/auth-providers.enum';
 
 // in your project and return an ORM entity directly in response.
 import { FileEntity } from '../../../../../files/infrastructure/persistence/relational/entities/file.entity';

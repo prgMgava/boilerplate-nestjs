@@ -62,17 +62,26 @@ module.exports = {
         order: 'asc',
       },
     ],
+    'perfectionist/sort-named-imports': [
+      'error',
+      {
+        type: 'alphabetical',
+        order: 'asc',
+      },
+    ],
     'perfectionist/sort-imports': [
       'error',
       {
         type: 'alphabetical',
         order: 'asc',
         groups: [
+          'nestjs',
           'builtin',
           'external',
           'internal-type',
           'internal',
-          'resources',
+          'services',
+          'api',
           ['parent-type', 'sibling-type', 'index-type'],
           ['parent', 'sibling', 'index'],
           'side-effect',
@@ -80,6 +89,25 @@ module.exports = {
           'object',
           'unknown',
         ],
+        'custom-groups': {
+          value: {
+            nestjs: '@nestjs**/**',
+            api: [
+              '@auth*/**',
+              '@files/**',
+              '@home/**',
+              '@roles/**',
+              '@session/**',
+              '@social/**',
+              '@statuses/**',
+              '@users/**',
+            ],
+            services: ['@mail**/**'],
+          },
+          type: {
+            api: 'api',
+          },
+        },
         'newlines-between': 'always',
         'internal-pattern': [
           '@config/**',

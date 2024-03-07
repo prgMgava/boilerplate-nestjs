@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from '@users/domain/user';
+
 import { EntityCondition } from '@utils/types/entity-condition.type';
 import { Model } from 'mongoose';
+
+import { User } from '@users/domain/user';
 
 import { NullableType } from '../../../../../utils/types/nullable.type';
 import { Session } from '../../../../domain/session';

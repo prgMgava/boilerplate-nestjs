@@ -1,5 +1,6 @@
 import { Injectable, LoggerService as NestLoggerService } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+
 import { Pool } from 'pg';
 import { Logger } from 'winston';
 
