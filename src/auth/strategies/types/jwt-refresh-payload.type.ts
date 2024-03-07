@@ -1,7 +1,7 @@
-import { Session } from 'src/session/domain/session';
+import { Session } from '@session/domain/session';
 
 export type JwtRefreshPayloadType = {
-  sessionId: Session['id'];
-  iat: number;
   exp: number;
+  iat: number;
+  sessionId: Session['id'];
 };

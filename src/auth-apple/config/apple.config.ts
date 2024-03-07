@@ -1,6 +1,7 @@
+import { AppleConfig } from '@auth-apple/config/apple-config.type';
 import { registerAs } from '@nestjs/config';
-import { AppleConfig } from 'src/auth-apple/config/apple-config.type';
 import { IsJSON, IsOptional } from 'class-validator';
+
 import validateConfig from '../../utils/validate-config';
 
 class EnvironmentVariablesValidator {

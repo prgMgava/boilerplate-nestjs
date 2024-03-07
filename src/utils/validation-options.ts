@@ -19,18 +19,18 @@ function generateErrors(errors: ValidationError[]) {
 }
 
 const validationOptions: ValidationPipeOptions = {
-  transform: true,
-  whitelist: true,
   errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
   exceptionFactory: (errors: ValidationError[]) => {
     return new HttpException(
       {
-        status: HttpStatus.UNPROCESSABLE_ENTITY,
         errors: generateErrors(errors),
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
       },
       HttpStatus.UNPROCESSABLE_ENTITY,
     );
   },
+  transform: true,
+  whitelist: true,
 };
 
 export default validationOptions;

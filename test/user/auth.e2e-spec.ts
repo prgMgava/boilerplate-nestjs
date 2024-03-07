@@ -1,10 +1,11 @@
 import request from 'supertest';
+
 import {
   APP_URL,
-  TESTER_EMAIL,
-  TESTER_PASSWORD,
   MAIL_HOST,
   MAIL_PORT,
+  TESTER_EMAIL,
+  TESTER_PASSWORD,
 } from '../utils/constants';
 
 describe('Auth user (e2e)', () => {
@@ -36,9 +37,9 @@ describe('Auth user (e2e)', () => {
       .post('/api/v1/auth/email/register')
       .send({
         email: TESTER_EMAIL,
-        password: TESTER_PASSWORD,
         firstName: 'Tester',
         lastName: 'E2E',
+        password: TESTER_PASSWORD,
       })
       .expect(422)
       .expect(({ body }) => {
@@ -51,9 +52,9 @@ describe('Auth user (e2e)', () => {
       .post('/api/v1/auth/email/register')
       .send({
         email: newUserEmail,
-        password: newUserPassword,
         firstName: newUserFirstName,
         lastName: newUserLastName,
+        password: newUserPassword,
       })
       .expect(204);
   });
@@ -191,8 +192,8 @@ describe('Auth user (e2e)', () => {
       })
       .send({
         firstName: newUserNewName,
-        password: newUserNewPassword,
         oldPassword: newUserPassword,
+        password: newUserNewPassword,
       })
       .expect(200);
 
@@ -209,7 +210,7 @@ describe('Auth user (e2e)', () => {
       .auth(newUserApiToken, {
         type: 'bearer',
       })
-      .send({ password: newUserPassword, oldPassword: newUserNewPassword })
+      .send({ oldPassword: newUserNewPassword, password: newUserPassword })
       .expect(200);
   });
 

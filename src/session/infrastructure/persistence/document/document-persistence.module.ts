@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SessionSchema, SessionSchemaClass } from './entities/session.schema';
+
 import { SessionRepository } from '../session.repository';
+import { SessionSchema, SessionSchemaClass } from './entities/session.schema';
 import { SessionDocumentRepository } from './repositories/session.repository';
 
 @Module({
+  exports: [SessionRepository],
   imports: [
     MongooseModule.forFeature([
       { name: SessionSchemaClass.name, schema: SessionSchema },
@@ -16,6 +18,5 @@ import { SessionDocumentRepository } from './repositories/session.repository';
       useClass: SessionDocumentRepository,
     },
   ],
-  exports: [SessionRepository],
 })
 export class DocumentSessionPersistenceModule {}

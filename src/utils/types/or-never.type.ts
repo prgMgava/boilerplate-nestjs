@@ -1,1 +1,1 @@
-export type OrNeverType<T> = T | never;
+export type OrNeverType<T> = never | T;

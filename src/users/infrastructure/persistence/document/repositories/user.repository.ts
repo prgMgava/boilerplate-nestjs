@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { EntityCondition } from 'src/utils/types/entity-condition.type';
-import { IPaginationOptions } from 'src/utils/types/pagination-options';
+import { InjectModel } from '@nestjs/mongoose';
+import { EntityCondition } from '@utils/types/entity-condition.type';
+import { IPaginationOptions } from '@utils/types/pagination-options';
+import { Model } from 'mongoose';
+
 import { NullableType } from '../../../../../utils/types/nullable.type';
-import { FilterUserDto, SortUserDto } from '../../../../dto/query-user.dto';
 import { User } from '../../../../domain/user';
+import { FilterUserDto, SortUserDto } from '../../../../dto/query-user.dto';
 import { UserRepository } from '../../user.repository';
 import { UserSchemaClass } from '../entities/user.schema';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { UserMapper } from '../mappers/user.mapper';
 
 @Injectable()
@@ -26,12 +27,12 @@ export class UsersDocumentRepository implements UserRepository {
 
   async findManyWithPagination({
     filterOptions,
-    sortOptions,
     paginationOptions,
+    sortOptions,
   }: {
     filterOptions?: FilterUserDto | null;
-    sortOptions?: SortUserDto[] | null;
     paginationOptions: IPaginationOptions;
+    sortOptions?: null | SortUserDto[];
   }): Promise<User[]> {
     const where: EntityCondition<User> = {};
     if (filterOptions?.roles?.length) {
@@ -68,7 +69,13 @@ export class UsersDocumentRepository implements UserRepository {
     return userObject ? UserMapper.toDomain(userObject) : null;
   }
 
-  async update(id: User['id'], payload: Partial<User>): Promise<User | null> {
+  async softDelete(id: User['id']): Promise<void> {
+    await this.usersModel.deleteOne({
+      _id: id,
+    });
+  }
+
+  async update(id: User['id'], payload: Partial<User>): Promise<null | User> {
     const clonedPayload = { ...payload };
     delete clonedPayload.id;
 
@@ -79,11 +86,5 @@ export class UsersDocumentRepository implements UserRepository {
     );
 
     return userObject ? UserMapper.toDomain(userObject) : null;
-  }
-
-  async softDelete(id: User['id']): Promise<void> {
-    await this.usersModel.deleteOne({
-      _id: id,
-    });
   }
 }

@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '@users/domain/user';
+import { UserEntity } from '@users/infrastructure/persistence/relational/entities/user.entity';
+import { EntityCondition } from '@utils/types/entity-condition.type';
 import { FindOptionsWhere, Not, Repository } from 'typeorm';
-import { SessionEntity } from '../entities/session.entity';
+
 import { NullableType } from '../../../../../utils/types/nullable.type';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { SessionRepository } from '../../session.repository';
 import { Session } from '../../../../domain/session';
-import { User } from 'src/users/domain/user';
-import { EntityCondition } from 'src/utils/types/entity-condition.type';
+import { SessionRepository } from '../../session.repository';
+import { SessionEntity } from '../entities/session.entity';
 import { SessionMapper } from '../mappers/session.mapper';
 
 @Injectable()
@@ -16,6 +17,13 @@ export class SessionRelationalRepository implements SessionRepository {
     @InjectRepository(SessionEntity)
     private readonly sessionRepository: Repository<SessionEntity>,
   ) {}
+
+  async create(data: Session): Promise<Session> {
+    const persistenceModel = SessionMapper.toPersistence(data);
+    return this.sessionRepository.save(
+      this.sessionRepository.create(persistenceModel),
+    );
+  }
 
   async findOne(
     options: EntityCondition<Session>,
@@ -27,20 +35,13 @@ export class SessionRelationalRepository implements SessionRepository {
     return entity ? SessionMapper.toDomain(entity) : null;
   }
 
-  async create(data: Session): Promise<Session> {
-    const persistenceModel = SessionMapper.toPersistence(data);
-    return this.sessionRepository.save(
-      this.sessionRepository.create(persistenceModel),
-    );
-  }
-
   async softDelete({
     excludeId,
     ...criteria
   }: {
+    excludeId?: Session['id'];
     id?: Session['id'];
     user?: Pick<User, 'id'>;
-    excludeId?: Session['id'];
   }): Promise<void> {
     await this.sessionRepository.softDelete({
       ...(criteria as {

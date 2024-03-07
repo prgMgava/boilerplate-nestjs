@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Twitter from 'twitter';
+
+import { AllConfigType } from '@config/config.type';
+
 import { SocialInterface } from '../social/interfaces/social.interface';
 import { AuthTwitterLoginDto } from './dto/auth-twitter-login.dto';
-import { AllConfigType } from 'src/config/config.type';
 
 @Injectable()
 export class AuthTwitterService {
@@ -13,14 +15,14 @@ export class AuthTwitterService {
     loginDto: AuthTwitterLoginDto,
   ): Promise<SocialInterface> {
     const twitter = new Twitter({
+      access_token_key: loginDto.accessTokenKey,
+      access_token_secret: loginDto.accessTokenSecret,
       consumer_key: this.configService.getOrThrow('twitter.consumerKey', {
         infer: true,
       }),
       consumer_secret: this.configService.getOrThrow('twitter.consumerSecret', {
         infer: true,
       }),
-      access_token_key: loginDto.accessTokenKey,
-      access_token_secret: loginDto.accessTokenSecret,
     });
 
     const data: Twitter.ResponseData = await new Promise((resolve) => {

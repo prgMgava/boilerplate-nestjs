@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { StatusEnum } from 'src/statuses/statuses.enum';
-import { Repository } from 'typeorm';
+import { RoleEnum } from '@roles/roles.enum';
+import { StatusEnum } from '@statuses/statuses.enum';
+import { UserEntity } from '@users/infrastructure/persistence/relational/entities/user.entity';
 import bcrypt from 'bcryptjs';
-import { UserEntity } from 'src/users/infrastructure/persistence/relational/entities/user.entity';
-import { RoleEnum } from 'src/roles/roles.enum';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class UserSeedService {
@@ -28,9 +28,9 @@ export class UserSeedService {
 
       await this.repository.save(
         this.repository.create({
+          email: 'admin@example.com',
           firstName: 'Super',
           lastName: 'Admin',
-          email: 'admin@example.com',
           password,
           role: {
             id: RoleEnum.admin,
@@ -58,9 +58,9 @@ export class UserSeedService {
 
       await this.repository.save(
         this.repository.create({
+          email: 'john.doe@example.com',
           firstName: 'John',
           lastName: 'Doe',
-          email: 'john.doe@example.com',
           password,
           role: {
             id: RoleEnum.user,

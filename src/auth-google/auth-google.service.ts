@@ -1,9 +1,11 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { OAuth2Client } from 'google-auth-library';
+
+import { AllConfigType } from '@config/config.type';
+
 import { SocialInterface } from '../social/interfaces/social.interface';
 import { AuthGoogleLoginDto } from './dto/auth-google-login.dto';
-import { AllConfigType } from 'src/config/config.type';
 
 @Injectable()
 export class AuthGoogleService {
@@ -20,10 +22,10 @@ export class AuthGoogleService {
     loginDto: AuthGoogleLoginDto,
   ): Promise<SocialInterface> {
     const ticket = await this.google.verifyIdToken({
-      idToken: loginDto.idToken,
       audience: [
         this.configService.getOrThrow('google.clientId', { infer: true }),
       ],
+      idToken: loginDto.idToken,
     });
 
     const data = ticket.getPayload();
@@ -31,10 +33,10 @@ export class AuthGoogleService {
     if (!data) {
       throw new HttpException(
         {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
             user: 'wrongToken',
           },
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );

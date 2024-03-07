@@ -1,7 +1,8 @@
-import { APP_URL, ADMIN_EMAIL, ADMIN_PASSWORD } from '../utils/constants';
+import { RoleEnum } from '@roles/roles.enum';
+import { StatusEnum } from '@statuses/statuses.enum';
 import request from 'supertest';
-import { RoleEnum } from '../../src/roles/roles.enum';
-import { StatusEnum } from '../../src/statuses/statuses.enum';
+
+import { ADMIN_EMAIL, ADMIN_PASSWORD, APP_URL } from '../utils/constants';
 
 describe('Users admin (e2e)', () => {
   const app = APP_URL;
@@ -27,9 +28,9 @@ describe('Users admin (e2e)', () => {
       .post('/api/v1/auth/email/register')
       .send({
         email: newUserEmailFirst,
-        password: newUserPasswordFirst,
         firstName: `First${Date.now()}`,
         lastName: 'E2E',
+        password: newUserPasswordFirst,
       });
 
     await request(app)
@@ -78,9 +79,9 @@ describe('Users admin (e2e)', () => {
       })
       .send({
         email: newUserByAdminEmailFirst,
-        password: newUserByAdminPasswordFirst,
         firstName: `UserByAdmin${Date.now()}`,
         lastName: 'E2E',
+        password: newUserByAdminPasswordFirst,
         role: {
           id: RoleEnum.user,
         },

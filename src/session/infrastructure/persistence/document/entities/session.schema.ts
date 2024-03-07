@@ -1,26 +1,26 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { now, HydratedDocument } from 'mongoose';
-import { UserSchemaClass } from 'src/users/infrastructure/persistence/document/entities/user.schema';
-import { EntityDocumentHelper } from 'src/utils/document-entity-helper';
+import { UserSchemaClass } from '@users/infrastructure/persistence/document/entities/user.schema';
+import { EntityDocumentHelper } from '@utils/document-entity-helper';
+import mongoose, { HydratedDocument, now } from 'mongoose';
 
 export type SessionSchemaDocument = HydratedDocument<SessionSchemaClass>;
 
 @Schema({
   timestamps: true,
   toJSON: {
-    virtuals: true,
     getters: true,
+    virtuals: true,
   },
 })
 export class SessionSchemaClass extends EntityDocumentHelper {
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'UserSchemaClass' })
-  user: UserSchemaClass;
-
   @Prop({ default: now })
   createdAt: Date;
 
   @Prop()
   deletedAt: Date;
+
+  @Prop({ ref: 'UserSchemaClass', type: mongoose.Schema.Types.ObjectId })
+  user: UserSchemaClass;
 }
 
 export const SessionSchema = SchemaFactory.createForClass(SessionSchemaClass);

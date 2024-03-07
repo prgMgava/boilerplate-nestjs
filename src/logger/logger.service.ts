@@ -1,41 +1,42 @@
 import { Injectable, LoggerService as NestLoggerService } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Logger } from 'winston';
 import { Pool } from 'pg';
+import { Logger } from 'winston';
+
 import { loadLoggerConfig } from './config/logger.config';
 
 enum WinstonLogLevel {
-  INFO = 'info',
-  ERROR = 'error',
-  WARN = 'WARN',
-  HTTP = 'HTTP',
-  VERBOSE = 'verbose',
   DEBUG = 'debug',
+  ERROR = 'error',
+  HTTP = 'HTTP',
+  INFO = 'info',
   SILLY = 'silly',
+  VERBOSE = 'verbose',
+  WARN = 'WARN',
 }
 
 @Injectable()
 export default class LoggerService implements NestLoggerService {
-  public logger: Logger;
   private pool: Pool;
+  public logger: Logger;
 
   constructor(config: ConfigService) {
     loadLoggerConfig(this.logger, config);
   }
 
-  log(message: any) {
-    this.logger.log(WinstonLogLevel.INFO, message);
+  debug?(message: any) {
+    this.logger.log(WinstonLogLevel.DEBUG, message);
   }
   error(message: any) {
     this.logger.log(WinstonLogLevel.ERROR, message);
   }
-  warn(message: any) {
-    this.logger.log(WinstonLogLevel.WARN, message);
-  }
-  debug?(message: any) {
-    this.logger.log(WinstonLogLevel.DEBUG, message);
+  log(message: any) {
+    this.logger.log(WinstonLogLevel.INFO, message);
   }
   verbose?(message: any) {
     this.logger.log(WinstonLogLevel.VERBOSE, message);
+  }
+  warn(message: any) {
+    this.logger.log(WinstonLogLevel.WARN, message);
   }
 }

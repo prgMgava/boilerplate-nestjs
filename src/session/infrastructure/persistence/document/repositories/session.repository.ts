@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { NullableType } from '../../../../../utils/types/nullable.type';
-import { SessionRepository } from '../../session.repository';
-import { Session } from '../../../../domain/session';
-import { SessionSchemaClass } from '../entities/session.schema';
-import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from 'src/users/domain/user';
-import { EntityCondition } from 'src/utils/types/entity-condition.type';
+import { User } from '@users/domain/user';
+import { EntityCondition } from '@utils/types/entity-condition.type';
+import { Model } from 'mongoose';
+
+import { NullableType } from '../../../../../utils/types/nullable.type';
+import { Session } from '../../../../domain/session';
+import { SessionRepository } from '../../session.repository';
+import { SessionSchemaClass } from '../entities/session.schema';
 import { SessionMapper } from '../mappers/session.mapper';
 
 @Injectable()
@@ -15,6 +16,13 @@ export class SessionDocumentRepository implements SessionRepository {
     @InjectModel(SessionSchemaClass.name)
     private sessionModel: Model<SessionSchemaClass>,
   ) {}
+
+  async create(data: Session): Promise<Session> {
+    const persistenceModel = SessionMapper.toPersistence(data);
+    const createdSession = new this.sessionModel(persistenceModel);
+    const sessionObject = await createdSession.save();
+    return SessionMapper.toDomain(sessionObject);
+  }
 
   async findOne(
     fields: EntityCondition<Session>,
@@ -28,28 +36,21 @@ export class SessionDocumentRepository implements SessionRepository {
     return sessionObject ? SessionMapper.toDomain(sessionObject) : null;
   }
 
-  async create(data: Session): Promise<Session> {
-    const persistenceModel = SessionMapper.toPersistence(data);
-    const createdSession = new this.sessionModel(persistenceModel);
-    const sessionObject = await createdSession.save();
-    return SessionMapper.toDomain(sessionObject);
-  }
-
   async softDelete({
     excludeId,
     ...criteria
   }: {
+    excludeId?: Session['id'];
     id?: Session['id'];
     user?: Pick<User, 'id'>;
-    excludeId?: Session['id'];
   }): Promise<void> {
     const transformedCriteria = {
-      user: criteria.user?.id,
       _id: criteria.id
         ? criteria.id
         : excludeId
           ? { $not: { $eq: excludeId } }
           : undefined,
+      user: criteria.user?.id,
     };
     await this.sessionModel.deleteMany(transformedCriteria);
   }

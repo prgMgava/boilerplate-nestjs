@@ -1,13 +1,15 @@
+import { EntityRelationalHelper } from '@utils/relational-entity-helper';
 import {
+  AfterInsert,
+  AfterLoad,
   Column,
   Entity,
   PrimaryGeneratedColumn,
-  AfterLoad,
-  AfterInsert,
 } from 'typeorm';
-import { EntityRelationalHelper } from 'src/utils/relational-entity-helper';
+
+import { AppConfig } from '@config/app-config.type';
+
 import appConfig from '../../../../../config/app.config';
-import { AppConfig } from 'src/config/app-config.type';
 
 @Entity({ name: 'file' })
 export class FileEntity extends EntityRelationalHelper {

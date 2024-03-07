@@ -1,10 +1,10 @@
 export type AuthConfig = {
-  secret?: string;
-  expires?: string;
-  refreshSecret?: string;
-  refreshExpires?: string;
-  forgotSecret?: string;
-  forgotExpires?: string;
-  confirmEmailSecret?: string;
   confirmEmailExpires?: string;
+  confirmEmailSecret?: string;
+  expires?: string;
+  forgotExpires?: string;
+  forgotSecret?: string;
+  refreshExpires?: string;
+  refreshSecret?: string;
+  secret?: string;
 };

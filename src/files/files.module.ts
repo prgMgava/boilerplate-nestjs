@@ -1,17 +1,19 @@
-import { HttpException, HttpStatus, Module } from '@nestjs/common';
-import { FilesController } from './files.controller';
-import { MulterModule } from '@nestjs/platform-express';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { diskStorage } from 'multer';
-import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { S3Client } from '@aws-sdk/client-s3';
+import { HttpException, HttpStatus, Module } from '@nestjs/common';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
 import multerS3 from 'multer-s3';
-import { AllConfigType } from 'src/config/config.type';
-import databaseConfig from 'src/database/config/database.config';
-import { DatabaseConfig } from 'src/database/config/database-config.type';
+
+import { AllConfigType } from '@config/config.type';
+import { DatabaseConfig } from '@database/config/database-config.type';
+import databaseConfig from '@database/config/database.config';
+
+import { FilesController } from './files.controller';
+import { FilesService } from './files.service';
 import { DocumentFilePersistenceModule } from './infrastructure/persistence/document/document-persistence.module';
 import { RelationalFilePersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
-import { FilesService } from './files.service';
 
 const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
   .isDocumentDatabase
@@ -19,6 +21,8 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
   : RelationalFilePersistenceModule;
 
 @Module({
+  controllers: [FilesController],
+  exports: [FilesService, infrastructurePersistenceModule],
   imports: [
     infrastructurePersistenceModule,
     MulterModule.registerAsync({
@@ -41,7 +45,6 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
             }),
           s3: () => {
             const s3 = new S3Client({
-              region: configService.get('file.awsS3Region', { infer: true }),
               credentials: {
                 accessKeyId: configService.getOrThrow('file.accessKeyId', {
                   infer: true,
@@ -51,14 +54,14 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
                   { infer: true },
                 ),
               },
+              region: configService.get('file.awsS3Region', { infer: true }),
             });
 
             return multerS3({
-              s3: s3,
+              acl: 'public-read',
               bucket: configService.getOrThrow('file.awsDefaultS3Bucket', {
                 infer: true,
               }),
-              acl: 'public-read',
               contentType: multerS3.AUTO_CONTENT_TYPE,
               key: (request, file, callback) => {
                 callback(
@@ -69,6 +72,7 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
                     ?.toLowerCase()}`,
                 );
               },
+              s3: s3,
             });
           },
         };
@@ -79,10 +83,10 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
               return callback(
                 new HttpException(
                   {
-                    status: HttpStatus.UNPROCESSABLE_ENTITY,
                     errors: {
                       file: `cantUploadFileType`,
                     },
+                    status: HttpStatus.UNPROCESSABLE_ENTITY,
                   },
                   HttpStatus.UNPROCESSABLE_ENTITY,
                 ),
@@ -92,19 +96,17 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
 
             callback(null, true);
           },
+          limits: {
+            fileSize: configService.get('file.maxFileSize', { infer: true }),
+          },
           storage:
             storages[
               configService.getOrThrow('file.driver', { infer: true })
             ](),
-          limits: {
-            fileSize: configService.get('file.maxFileSize', { infer: true }),
-          },
         };
       },
     }),
   ],
-  controllers: [FilesController],
   providers: [ConfigModule, ConfigService, FilesService],
-  exports: [FilesService, infrastructurePersistenceModule],
 })
 export class FilesModule {}

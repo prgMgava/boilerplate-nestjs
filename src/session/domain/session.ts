@@ -1,8 +1,8 @@
-import { User } from 'src/users/domain/user';
+import { User } from '@users/domain/user';
 
 export class Session {
-  id: number | string;
-  user: User;
   createdAt: Date;
   deletedAt: Date;
+  id: number | string;
+  user: User;
 }

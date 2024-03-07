@@ -1,11 +1,11 @@
 export type MailConfig = {
-  port: number;
-  host?: string;
-  user?: string;
-  password?: string;
   defaultEmail?: string;
   defaultName?: string;
+  host?: string;
   ignoreTLS: boolean;
-  secure: boolean;
+  password?: string;
+  port: number;
   requireTLS: boolean;
+  secure: boolean;
+  user?: string;
 };

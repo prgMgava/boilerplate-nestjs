@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { RoleEnum } from '@roles/roles.enum';
+import { StatusEnum } from '@statuses/statuses.enum';
+import { UserSchemaClass } from '@users/infrastructure/persistence/document/entities/user.schema';
 import bcrypt from 'bcryptjs';
 import { Model } from 'mongoose';
-import { RoleEnum } from 'src/roles/roles.enum';
-import { StatusEnum } from 'src/statuses/statuses.enum';
-import { UserSchemaClass } from 'src/users/infrastructure/persistence/document/entities/user.schema';
 
 @Injectable()
 export class UserSeedService {
@@ -24,9 +24,9 @@ export class UserSeedService {
 
       const data = new this.model({
         email: 'admin@example.com',
-        password: password,
         firstName: 'Super',
         lastName: 'Admin',
+        password: password,
         role: {
           id: RoleEnum.admin,
         },
@@ -47,9 +47,9 @@ export class UserSeedService {
 
       const data = new this.model({
         email: 'john.doe@example.com',
-        password: password,
         firstName: 'John',
         lastName: 'Doe',
+        password: password,
         role: {
           id: RoleEnum.user,
         },

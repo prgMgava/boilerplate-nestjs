@@ -1,40 +1,42 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { RoleDto } from '@roles/dto/role.dto';
+import { plainToInstance, Transform, Type } from 'class-transformer';
 import {
   IsNumber,
   IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
-import { Transform, Type, plainToInstance } from 'class-transformer';
+
 import { User } from '../domain/user';
-import { RoleDto } from 'src/roles/dto/role.dto';
 
 export class FilterUserDto {
   @ApiProperty({ type: RoleDto })
   @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => RoleDto)
-  roles?: RoleDto[] | null;
+  roles?: null | RoleDto[];
 }
 
 export class SortUserDto {
   @ApiProperty()
   @IsString()
-  orderBy: keyof User;
+  order: string;
 
   @ApiProperty()
   @IsString()
-  order: string;
+  orderBy: keyof User;
 }
 
 export class QueryUserDto {
-  @ApiProperty({
-    required: false,
-  })
-  @Transform(({ value }) => (value ? Number(value) : 1))
-  @IsNumber()
+  @ApiProperty({ required: false, type: String })
   @IsOptional()
-  page: number;
+  @Transform(({ value }) =>
+    value ? plainToInstance(FilterUserDto, JSON.parse(value)) : undefined,
+  )
+  @ValidateNested()
+  @Type(() => FilterUserDto)
+  filters?: FilterUserDto | null;
 
   @ApiProperty({
     required: false,
@@ -44,21 +46,20 @@ export class QueryUserDto {
   @IsOptional()
   limit: number;
 
-  @ApiProperty({ type: String, required: false })
+  @ApiProperty({
+    required: false,
+  })
+  @Transform(({ value }) => (value ? Number(value) : 1))
+  @IsNumber()
   @IsOptional()
-  @Transform(({ value }) =>
-    value ? plainToInstance(FilterUserDto, JSON.parse(value)) : undefined,
-  )
-  @ValidateNested()
-  @Type(() => FilterUserDto)
-  filters?: FilterUserDto | null;
+  page: number;
 
-  @ApiProperty({ type: String, required: false })
+  @ApiProperty({ required: false, type: String })
   @IsOptional()
   @Transform(({ value }) => {
     return value ? plainToInstance(SortUserDto, JSON.parse(value)) : undefined;
   })
   @ValidateNested({ each: true })
   @Type(() => SortUserDto)
-  sort?: SortUserDto[] | null;
+  sort?: null | SortUserDto[];
 }

@@ -1,12 +1,12 @@
 export type AppConfig = {
-  nodeEnv: string;
-  name: string;
-  workingDirectory: string;
-  frontendDomain?: string;
-  backendDomain: string;
-  port: number;
   apiPrefix: string;
-  fallbackLanguage: string;
-  headerLanguage: string;
   appLogFileName: string;
+  backendDomain: string;
+  fallbackLanguage: string;
+  frontendDomain?: string;
+  headerLanguage: string;
+  name: string;
+  nodeEnv: string;
+  port: number;
+  workingDirectory: string;
 };

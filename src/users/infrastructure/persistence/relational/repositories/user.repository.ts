@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityCondition } from 'src/utils/types/entity-condition.type';
-import { IPaginationOptions } from 'src/utils/types/pagination-options';
+import { EntityCondition } from '@utils/types/entity-condition.type';
+import { IPaginationOptions } from '@utils/types/pagination-options';
 import { FindOptionsWhere, Repository } from 'typeorm';
-import { UserEntity } from '../entities/user.entity';
+
 import { NullableType } from '../../../../../utils/types/nullable.type';
-import { FilterUserDto, SortUserDto } from '../../../../dto/query-user.dto';
 import { User } from '../../../../domain/user';
+import { FilterUserDto, SortUserDto } from '../../../../dto/query-user.dto';
 import { UserRepository } from '../../user.repository';
+import { UserEntity } from '../entities/user.entity';
 import { UserMapper } from '../mappers/user.mapper';
 
 @Injectable()
@@ -27,12 +28,12 @@ export class UsersRelationalRepository implements UserRepository {
 
   async findManyWithPagination({
     filterOptions,
-    sortOptions,
     paginationOptions,
+    sortOptions,
   }: {
     filterOptions?: FilterUserDto | null;
-    sortOptions?: SortUserDto[] | null;
     paginationOptions: IPaginationOptions;
+    sortOptions?: null | SortUserDto[];
   }): Promise<User[]> {
     const where: FindOptionsWhere<UserEntity> = {};
     if (filterOptions?.roles?.length) {
@@ -42,9 +43,6 @@ export class UsersRelationalRepository implements UserRepository {
     }
 
     const entities = await this.usersRepository.find({
-      skip: (paginationOptions.page - 1) * paginationOptions.limit,
-      take: paginationOptions.limit,
-      where: where,
       order: sortOptions?.reduce(
         (accumulator, sort) => ({
           ...accumulator,
@@ -52,6 +50,9 @@ export class UsersRelationalRepository implements UserRepository {
         }),
         {},
       ),
+      skip: (paginationOptions.page - 1) * paginationOptions.limit,
+      take: paginationOptions.limit,
+      where: where,
     });
 
     return entities.map((user) => UserMapper.toDomain(user));
@@ -63,6 +64,10 @@ export class UsersRelationalRepository implements UserRepository {
     });
 
     return entity ? UserMapper.toDomain(entity) : null;
+  }
+
+  async softDelete(id: User['id']): Promise<void> {
+    await this.usersRepository.softDelete(id);
   }
 
   async update(id: User['id'], payload: Partial<User>): Promise<User> {
@@ -84,9 +89,5 @@ export class UsersRelationalRepository implements UserRepository {
     );
 
     return UserMapper.toDomain(updatedEntity);
-  }
-
-  async softDelete(id: User['id']): Promise<void> {
-    await this.usersRepository.softDelete(id);
   }
 }

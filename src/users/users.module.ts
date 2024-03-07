@@ -1,12 +1,13 @@
+import { FilesModule } from '@files/files.module';
 import { Module } from '@nestjs/common';
 
-import { UsersController } from './users.controller';
-import { FilesModule } from 'src/files/files.module';
-import databaseConfig from 'src/database/config/database.config';
-import { DatabaseConfig } from 'src/database/config/database-config.type';
-import { UsersService } from './users.service';
+import { DatabaseConfig } from '@database/config/database-config.type';
+import databaseConfig from '@database/config/database.config';
+
 import { DocumentUserPersistenceModule } from './infrastructure/persistence/document/document-persistence.module';
 import { RelationalUserPersistenceModule } from './infrastructure/persistence/relational/relational-persistence.module';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 
 const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
   .isDocumentDatabase
@@ -14,9 +15,9 @@ const infrastructurePersistenceModule = (databaseConfig() as DatabaseConfig)
   : RelationalUserPersistenceModule;
 
 @Module({
-  imports: [infrastructurePersistenceModule, FilesModule],
   controllers: [UsersController],
-  providers: [UsersService],
   exports: [UsersService, infrastructurePersistenceModule],
+  imports: [infrastructurePersistenceModule, FilesModule],
+  providers: [UsersService],
 })
 export class UsersModule {}

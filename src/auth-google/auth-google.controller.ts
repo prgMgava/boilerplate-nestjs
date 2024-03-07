@@ -7,10 +7,11 @@ import {
   SerializeOptions,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+
 import { AuthService } from '../auth/auth.service';
+import { LoginResponseType } from '../auth/types/login-response.type';
 import { AuthGoogleService } from './auth-google.service';
 import { AuthGoogleLoginDto } from './dto/auth-google-login.dto';
-import { LoginResponseType } from '../auth/types/login-response.type';
 
 @ApiTags('Auth')
 @Controller({

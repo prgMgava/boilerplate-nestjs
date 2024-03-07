@@ -1,35 +1,57 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { now, HydratedDocument } from 'mongoose';
-import { Role } from 'src/roles/domain/role';
-import { Status } from 'src/statuses/domain/status';
-import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 // We use class-transformer in schema and domain entity.
 // We duplicate these rules because you can choose not to use adapters
+import { AuthProvidersEnum } from '@auth/auth-providers.enum';
+import { FileSchemaClass } from '@files/infrastructure/persistence/document/entities/file.schema';
+import { Role } from '@roles/domain/role';
+import { Status } from '@statuses/domain/status';
+import { EntityDocumentHelper } from '@utils/document-entity-helper';
 // in your project and return an schema entity directly in response.
 import { Exclude, Expose, Type } from 'class-transformer';
-import { EntityDocumentHelper } from 'src/utils/document-entity-helper';
-import { FileSchemaClass } from 'src/files/infrastructure/persistence/document/entities/file.schema';
+import { HydratedDocument, now } from 'mongoose';
 
 export type UserSchemaDocument = HydratedDocument<UserSchemaClass>;
 
 @Schema({
   timestamps: true,
   toJSON: {
-    virtuals: true,
     getters: true,
+    virtuals: true,
   },
 })
 export class UserSchemaClass extends EntityDocumentHelper {
+  @Prop({ default: now })
+  createdAt: Date;
+
+  @Prop()
+  deletedAt: Date;
+
   @Prop({
     type: String,
     unique: true,
   })
   @Expose({ groups: ['me', 'admin'], toPlainOnly: true })
-  email: string | null;
+  email: null | string;
+
+  @Prop({
+    type: String,
+  })
+  firstName: null | string;
+
+  @Prop({
+    type: String,
+  })
+  lastName: null | string;
 
   @Exclude({ toPlainOnly: true })
   @Prop()
   password?: string;
+
+  @Prop({
+    type: FileSchemaClass,
+  })
+  @Type(() => FileSchemaClass)
+  photo?: FileSchemaClass | null;
 
   @Exclude({ toPlainOnly: true })
   previousPassword?: string;
@@ -40,33 +62,17 @@ export class UserSchemaClass extends EntityDocumentHelper {
   })
   provider: string;
 
-  @Expose({ groups: ['me', 'admin'], toPlainOnly: true })
-  @Prop({
-    type: String,
-    default: null,
-  })
-  socialId?: string | null;
-
-  @Prop({
-    type: String,
-  })
-  firstName: string | null;
-
-  @Prop({
-    type: String,
-  })
-  lastName: string | null;
-
-  @Prop({
-    type: FileSchemaClass,
-  })
-  @Type(() => FileSchemaClass)
-  photo?: FileSchemaClass | null;
-
   @Prop({
     type: Role,
   })
-  role?: Role | null;
+  role?: null | Role;
+
+  @Expose({ groups: ['me', 'admin'], toPlainOnly: true })
+  @Prop({
+    default: null,
+    type: String,
+  })
+  socialId?: null | string;
 
   @Prop({
     type: Status,
@@ -74,13 +80,7 @@ export class UserSchemaClass extends EntityDocumentHelper {
   status?: Status;
 
   @Prop({ default: now })
-  createdAt: Date;
-
-  @Prop({ default: now })
   updatedAt: Date;
-
-  @Prop()
-  deletedAt: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserSchemaClass);

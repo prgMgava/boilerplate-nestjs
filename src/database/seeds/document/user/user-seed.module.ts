@@ -3,10 +3,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import {
   UserSchema,
   UserSchemaClass,
-} from 'src/users/infrastructure/persistence/document/entities/user.schema';
+} from '@users/infrastructure/persistence/document/entities/user.schema';
+
 import { UserSeedService } from './user-seed.service';
 
 @Module({
+  exports: [UserSeedService],
   imports: [
     MongooseModule.forFeature([
       {
@@ -16,6 +18,5 @@ import { UserSeedService } from './user-seed.service';
     ]),
   ],
   providers: [UserSeedService],
-  exports: [UserSeedService],
 })
 export class UserSeedModule {}

@@ -1,18 +1,19 @@
 import {
-  ExceptionFilter,
-  Catch,
   ArgumentsHost,
+  Catch,
+  ExceptionFilter,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
-import LoggerService from 'src/logger/logger.service';
+
+import LoggerService from '@logger/logger.service';
 
 @Catch()
 export class ErrorHandler implements ExceptionFilter {
-  private readonly LoggerService: LoggerService;
   private readonly jwtService: JwtService;
+  private readonly LoggerService: LoggerService;
 
   constructor(private readonly _loggerService: LoggerService) {
     this.LoggerService = this._loggerService;
@@ -54,19 +55,19 @@ export class ErrorHandler implements ExceptionFilter {
     }
 
     await this.LoggerService.error({
-      statusCode,
-      message: JSON.stringify(message),
-      userId: decoded?.id || null,
-      params: params,
-      endpoint: endpoint,
-      query: query,
-      method: method,
       body: body,
+      endpoint: endpoint,
+      message: JSON.stringify(message),
+      method: method,
+      params: params,
+      query: query,
+      statusCode,
+      userId: decoded?.id || null,
     });
 
     response.status(statusCode).json({
-      statusCode,
       message,
+      statusCode,
     });
   }
 }

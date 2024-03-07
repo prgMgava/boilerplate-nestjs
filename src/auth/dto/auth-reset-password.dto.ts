@@ -4,9 +4,9 @@ import { IsNotEmpty } from 'class-validator';
 export class AuthResetPasswordDto {
   @ApiProperty()
   @IsNotEmpty()
-  password: string;
+  hash: string;
 
   @ApiProperty()
   @IsNotEmpty()
-  hash: string;
+  password: string;
 }

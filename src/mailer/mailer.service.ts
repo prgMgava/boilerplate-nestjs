@@ -1,34 +1,36 @@
-import { Injectable } from '@nestjs/common';
 import fs from 'node:fs/promises';
+
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import nodemailer from 'nodemailer';
 import Handlebars from 'handlebars';
-import { AllConfigType } from 'src/config/config.type';
+import nodemailer from 'nodemailer';
+
+import { AllConfigType } from '@config/config.type';
 
 @Injectable()
 export class MailerService {
   private readonly transporter: nodemailer.Transporter;
   constructor(private readonly configService: ConfigService<AllConfigType>) {
     this.transporter = nodemailer.createTransport({
-      host: configService.get('mail.host', { infer: true }),
-      port: configService.get('mail.port', { infer: true }),
-      ignoreTLS: configService.get('mail.ignoreTLS', { infer: true }),
-      secure: configService.get('mail.secure', { infer: true }),
-      requireTLS: configService.get('mail.requireTLS', { infer: true }),
       auth: {
-        user: configService.get('mail.user', { infer: true }),
         pass: configService.get('mail.password', { infer: true }),
+        user: configService.get('mail.user', { infer: true }),
       },
+      host: configService.get('mail.host', { infer: true }),
+      ignoreTLS: configService.get('mail.ignoreTLS', { infer: true }),
+      port: configService.get('mail.port', { infer: true }),
+      requireTLS: configService.get('mail.requireTLS', { infer: true }),
+      secure: configService.get('mail.secure', { infer: true }),
     });
   }
 
   async sendMail({
-    templatePath,
     context,
+    templatePath,
     ...mailOptions
   }: nodemailer.SendMailOptions & {
-    templatePath: string;
     context: Record<string, unknown>;
+    templatePath: string;
   }): Promise<void> {
     let html: string | undefined;
     if (templatePath) {

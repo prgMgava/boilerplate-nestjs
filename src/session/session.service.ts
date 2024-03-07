@@ -1,28 +1,29 @@
 import { Injectable } from '@nestjs/common';
-import { User } from 'src/users/domain/user';
-import { EntityCondition } from 'src/utils/types/entity-condition.type';
-import { SessionRepository } from './infrastructure/persistence/session.repository';
+import { User } from '@users/domain/user';
+import { EntityCondition } from '@utils/types/entity-condition.type';
+import { NullableType } from '@utils/types/nullable.type';
+
 import { Session } from './domain/session';
-import { NullableType } from 'src/utils/types/nullable.type';
+import { SessionRepository } from './infrastructure/persistence/session.repository';
 
 @Injectable()
 export class SessionService {
   constructor(private readonly sessionRepository: SessionRepository) {}
 
-  findOne(options: EntityCondition<Session>): Promise<NullableType<Session>> {
-    return this.sessionRepository.findOne(options);
-  }
-
   create(
-    data: Omit<Session, 'id' | 'createdAt' | 'deletedAt'>,
+    data: Omit<Session, 'createdAt' | 'deletedAt' | 'id'>,
   ): Promise<Session> {
     return this.sessionRepository.create(data);
   }
 
+  findOne(options: EntityCondition<Session>): Promise<NullableType<Session>> {
+    return this.sessionRepository.findOne(options);
+  }
+
   async softDelete(criteria: {
+    excludeId?: Session['id'];
     id?: Session['id'];
     user?: Pick<User, 'id'>;
-    excludeId?: Session['id'];
   }): Promise<void> {
     await this.sessionRepository.softDelete(criteria);
   }

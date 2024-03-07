@@ -9,7 +9,7 @@
     "target": "es2017",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
+    "baseUrl": ".",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
@@ -17,6 +17,68 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@auth/*": [
+        "src/auth/*"
+      ],
+      "@auth-apple/*": [
+        "./src/auth-apple/*"
+      ],
+      "@auth-facebook/*": [
+        "./src/auth-facebook/*"
+      ],
+      "@auth-google/*": [
+        "./src/auth-google/*"
+      ],
+      "@auth-twitter/*": [
+        "./src/auth-twitter/*"
+      ],
+      "@config/*": [
+        "./src/config/*"
+      ],
+      "@database/*": [
+        "./src/database/*"
+      ],
+      "@files/*": [
+        "./src/files/*"
+      ],
+      "@home/*": [
+        "./src/home/*"
+      ],
+      "@i18n/*": [
+        "./src/i18n/*"
+      ],
+      "@logger/*": [
+        "./src/logger/*"
+      ],
+      "@mail/*": [
+        "./src/mail/*"
+      ],
+      "@mailer/*": [
+        "./src/mailer/*"
+      ],
+      "@middlewares/*": [
+        "./src/middlewares/*"
+      ],
+      "@roles/*": [
+        "./src/roles/*"
+      ],
+      "@session/*": [
+        "./src/session/*"
+      ],
+      "@social/*": [
+        "./src/social/*"
+      ],
+      "@statuses/*": [
+        "./src/statuses/*"
+      ],
+      "@users/*": [
+        "./src/users/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+    }
   }
 }

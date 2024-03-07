@@ -1,29 +1,30 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
-  UseGuards,
-  Query,
-  HttpStatus,
+  Get,
   HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
   SerializeOptions,
+  UseGuards,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
+import { RolesGuard } from '@roles/roles.guard';
+import { infinityPagination } from '@utils/infinity-pagination';
+
 import { Roles } from '../roles/roles.decorator';
 import { RoleEnum } from '../roles/roles.enum';
-import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from 'src/roles/roles.guard';
-import { infinityPagination } from 'src/utils/infinity-pagination';
 import { InfinityPaginationResultType } from '../utils/types/infinity-pagination-result.type';
 import { NullableType } from '../utils/types/nullable.type';
-import { QueryUserDto } from './dto/query-user.dto';
 import { User } from './domain/user';
+import { CreateUserDto } from './dto/create-user.dto';
+import { QueryUserDto } from './dto/query-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 @ApiBearerAuth()
@@ -63,13 +64,13 @@ export class UsersController {
     return infinityPagination(
       await this.usersService.findManyWithPagination({
         filterOptions: query?.filters,
-        sortOptions: query?.sort,
         paginationOptions: {
-          page,
           limit,
+          page,
         },
+        sortOptions: query?.sort,
       }),
-      { page, limit },
+      { limit, page },
     );
   }
 
@@ -80,11 +81,22 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @ApiParam({
     name: 'id',
-    type: String,
     required: true,
+    type: String,
   })
   findOne(@Param('id') id: User['id']): Promise<NullableType<User>> {
     return this.usersService.findOne({ id });
+  }
+
+  @Delete(':id')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    type: String,
+  })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  remove(@Param('id') id: User['id']): Promise<void> {
+    return this.usersService.softDelete(id);
   }
 
   @SerializeOptions({
@@ -94,24 +106,13 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @ApiParam({
     name: 'id',
-    type: String,
     required: true,
+    type: String,
   })
   update(
     @Param('id') id: User['id'],
     @Body() updateProfileDto: UpdateUserDto,
-  ): Promise<User | null> {
+  ): Promise<null | User> {
     return this.usersService.update(id, updateProfileDto);
-  }
-
-  @Delete(':id')
-  @ApiParam({
-    name: 'id',
-    type: String,
-    required: true,
-  })
-  @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: User['id']): Promise<void> {
-    return this.usersService.softDelete(id);
   }
 }

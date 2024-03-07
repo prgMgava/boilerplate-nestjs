@@ -1,23 +1,25 @@
-import { Logger, createLogger, format, transports } from 'winston';
-import DailyRotateFile from 'winston-daily-rotate-file';
 import fs from 'fs';
+
 import { ConfigService } from '@nestjs/config';
+import { createLogger, format, Logger, transports } from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
+
 //import { Logtail } from '@logtail/node';
 //import { LogtailTransport } from '@logtail/winston';
 
 export const loadLoggerConfig = (logger: Logger, config: ConfigService) => {
-  const { combine, timestamp, label, printf, colorize } = format;
+  const { colorize, combine, label, printf, timestamp } = format;
 
   const customLoggerFormat = printf(
     ({
+      label,
       level,
       message,
-      label,
       timestamp,
     }: {
+      label: string;
       level: string;
       message: string;
-      label: string;
       timestamp: string;
     }) => {
       return `${timestamp} [${label}] ${level}: ${message}`;
@@ -33,31 +35,31 @@ export const loadLoggerConfig = (logger: Logger, config: ConfigService) => {
   }
 
   const fileRotateTransportError = new DailyRotateFile({
-    level: 'error',
-    filename: `log-%DATE%.log`,
     datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    maxSize: process.env.LOG_MAX_SIZE || '20m',
     dirname: '../logs/error',
+    filename: `log-%DATE%.log`,
+    level: 'error',
+    maxSize: process.env.LOG_MAX_SIZE || '20m',
+    zippedArchive: true,
   });
 
   const fileRotateTransportInfo = new DailyRotateFile({
-    level: 'info',
-    filename: `log-%DATE%.log`,
     datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    maxSize: process.env.LOG_MAX_SIZE || '20m',
     dirname: '../logs/info',
+    filename: `log-%DATE%.log`,
+    level: 'info',
     maxFiles: process.env.LOG_MAX_DAYS || '14d',
+    maxSize: process.env.LOG_MAX_SIZE || '20m',
+    zippedArchive: true,
   });
 
   const fileRotateTransportCombined = new DailyRotateFile({
-    filename: `log-%DATE%.log`,
     datePattern: 'YYYY-MM-DD',
-    zippedArchive: true,
-    maxSize: process.env.LOG_MAX_SIZE || '20m',
     dirname: '../logs/combined',
+    filename: `log-%DATE%.log`,
     maxFiles: process.env.LOG_MAX_DAYS || '14d',
+    maxSize: process.env.LOG_MAX_SIZE || '20m',
+    zippedArchive: true,
   });
 
   //const logTail = logTailTransport(fileRotateTransportCombined);
@@ -91,16 +93,3 @@ export const loadLoggerConfig = (logger: Logger, config: ConfigService) => {
 
 //   return logTail;
 // };
-
-const postgresTransport = () => {
-  const logger = new Logger({
-    transports: [
-      new Postgres({
-        connectionString: 'your connection string',
-        maxPool: 10,
-        level: 'info',
-        tableName: 'winston_logs',
-      }),
-    ],
-  });
-};

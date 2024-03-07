@@ -5,7 +5,7 @@ module.exports = {
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint/eslint-plugin'],
+  plugins: ['@typescript-eslint/eslint-plugin', 'perfectionist'],
   extends: [
     'plugin:@typescript-eslint/recommended',
     'plugin:prettier/recommended',
@@ -33,6 +33,73 @@ module.exports = {
           'CallExpression[callee.object.name=configService][callee.property.name=/^(get|getOrThrow)$/]:not(:has([arguments.1] Property[key.name=infer][value.value=true])), CallExpression[callee.object.property.name=configService][callee.property.name=/^(get|getOrThrow)$/]:not(:has([arguments.1] Property[key.name=infer][value.value=true]))',
         message:
           'Add "{ infer: true }" to configService.get() for correct typechecking. Example: configService.get("database.port", { infer: true })',
+      },
+    ],
+    'perfectionist/sort-interfaces': 'error',
+    'perfectionist/sort-classes': [
+      'error',
+      {
+        type: 'alphabetical',
+        order: 'asc',
+        groups: [
+          'index-signature',
+          'static-property',
+          'private-property',
+          'property',
+          'constructor',
+          'static-method',
+          'private-method',
+          'decorated-method',
+          'method',
+          ['get-method', 'set-method'],
+        ],
+      },
+    ],
+    'perfectionist/sort-enums': [
+      'error',
+      {
+        type: 'alphabetical',
+        order: 'asc',
+      },
+    ],
+    'perfectionist/sort-imports': [
+      'error',
+      {
+        type: 'alphabetical',
+        order: 'asc',
+        groups: [
+          'builtin',
+          'external',
+          'internal-type',
+          'internal',
+          'resources',
+          ['parent-type', 'sibling-type', 'index-type'],
+          ['parent', 'sibling', 'index'],
+          'side-effect',
+          'style',
+          'object',
+          'unknown',
+        ],
+        'newlines-between': 'always',
+        'internal-pattern': [
+          '@config/**',
+          '@logger/**',
+          '@middlewares/**',
+          '@i18n/**',
+          '@database/**',
+        ],
+      },
+    ],
+    'perfectionist/sort-objects': [
+      'error',
+      {
+        type: 'alphabetical',
+        order: 'asc',
+        'partition-by-comment': 'Part:**',
+        groups: ['id', 'unknown'],
+        'custom-groups': {
+          id: 'id',
+        },
       },
     ],
   },

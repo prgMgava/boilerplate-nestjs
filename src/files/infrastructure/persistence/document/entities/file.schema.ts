@@ -1,15 +1,17 @@
-import appConfig from '../../../../../config/app.config';
-import { AppConfig } from 'src/config/app-config.type';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { EntityDocumentHelper } from '@utils/document-entity-helper';
 import { HydratedDocument } from 'mongoose';
-import { EntityDocumentHelper } from 'src/utils/document-entity-helper';
+
+import { AppConfig } from '@config/app-config.type';
+
+import appConfig from '../../../../../config/app.config';
 
 export type FileSchemaDocument = HydratedDocument<FileSchemaClass>;
 
 @Schema({
   toJSON: {
-    virtuals: true,
     getters: true,
+    virtuals: true,
   },
 })
 export class FileSchemaClass extends EntityDocumentHelper {

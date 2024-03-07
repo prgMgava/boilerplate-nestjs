@@ -4,7 +4,8 @@ import {
   MongooseModuleOptions,
   MongooseOptionsFactory,
 } from '@nestjs/mongoose';
-import { AllConfigType } from 'src/config/config.type';
+
+import { AllConfigType } from '@config/config.type';
 
 @Injectable()
 export class MongooseConfigService implements MongooseOptionsFactory {
@@ -12,10 +13,10 @@ export class MongooseConfigService implements MongooseOptionsFactory {
 
   createMongooseOptions(): MongooseModuleOptions {
     return {
-      uri: this.configService.get('database.url', { infer: true }),
       dbName: this.configService.get('database.name', { infer: true }),
-      user: this.configService.get('database.username', { infer: true }),
       pass: this.configService.get('database.password', { infer: true }),
+      uri: this.configService.get('database.url', { infer: true }),
+      user: this.configService.get('database.username', { infer: true }),
     };
   }
 }

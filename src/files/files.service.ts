@@ -1,10 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { EntityCondition } from 'src/utils/types/entity-condition.type';
-import { NullableType } from 'src/utils/types/nullable.type';
-import { FileRepository } from './infrastructure/persistence/file.repository';
-import { FileType } from './domain/file';
 import { ConfigService } from '@nestjs/config';
-import { AllConfigType } from 'src/config/config.type';
+import { EntityCondition } from '@utils/types/entity-condition.type';
+import { NullableType } from '@utils/types/nullable.type';
+
+import { AllConfigType } from '@config/config.type';
+
+import { FileType } from './domain/file';
+import { FileRepository } from './infrastructure/persistence/file.repository';
 
 @Injectable()
 export class FilesService {
@@ -19,10 +21,10 @@ export class FilesService {
     if (!file) {
       throw new HttpException(
         {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
             file: 'selectFile',
           },
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
