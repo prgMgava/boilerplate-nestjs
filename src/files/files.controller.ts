@@ -11,9 +11,9 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
-  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiCookieAuth,
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
@@ -37,7 +37,7 @@ export class FilesController {
     return response.sendFile(path, { root: './files' });
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @UseGuards(AuthGuard('jwt'))
   @Post('upload')
   @ApiConsumes('multipart/form-data')

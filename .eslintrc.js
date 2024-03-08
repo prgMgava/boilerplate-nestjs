@@ -39,7 +39,7 @@ module.exports = {
     'perfectionist/sort-classes': [
       'error',
       {
-        type: 'alphabetical',
+        type: 'natural',
         order: 'asc',
         groups: [
           'index-signature',
@@ -115,6 +115,7 @@ module.exports = {
           '@middlewares/**',
           '@i18n/**',
           '@database/**',
+          '@utils/**',
         ],
       },
     ],

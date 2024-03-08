@@ -442,12 +442,7 @@ export class AuthService {
       sessionId: session.id,
     });
 
-    return {
-      refreshToken,
-      token,
-      tokenExpires,
-      user,
-    };
+    return { refreshToken, token, tokenExpires, user };
   }
 
   async validateSocialLogin(

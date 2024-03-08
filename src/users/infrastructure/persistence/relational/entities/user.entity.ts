@@ -1,5 +1,4 @@
 // We use class-transformer in ORM entity and domain entity.
-import { EntityRelationalHelper } from '@utils/relational-entity-helper';
 // We duplicate these rules because you can choose not to use adapters
 import { Exclude, Expose } from 'class-transformer';
 import {
@@ -13,6 +12,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { EntityRelationalHelper } from '@utils/relational-entity-helper';
 
 import { AuthProvidersEnum } from '@auth/auth-providers.enum';
 

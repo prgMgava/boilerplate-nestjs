@@ -12,13 +12,20 @@ import { useContainer } from 'class-validator';
 import { AppModule } from './app.module';
 import { AllConfigType } from './config/config.type';
 import LoggerService from './logger/logger.service';
-import { ErrorHandler } from './middlewares';
+import { ErrorHandler, ResponseHandler } from './middlewares';
 import validationOptions from './utils/validation-options';
 
 import 'dotenv/config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const allowedOrigins =
+    process.env.ALLOWED_ORIGINS?.split(',') || ([] as string[]);
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      credentials: true,
+      origin: allowedOrigins,
+    },
+  });
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
   const configService = app.get(ConfigService<AllConfigType>);
 
@@ -33,7 +40,10 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
   app.useGlobalPipes(new ValidationPipe(validationOptions));
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  app.useGlobalInterceptors(
+    new ClassSerializerInterceptor(app.get(Reflector)),
+    new ResponseHandler(),
+  );
   app.useGlobalFilters(new ErrorHandler(app.get(LoggerService)));
 
   const options = new DocumentBuilder()

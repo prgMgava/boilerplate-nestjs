@@ -5,8 +5,11 @@ import {
   HttpStatus,
   Post,
   SerializeOptions,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+
+import { CookieSessionInterceptor } from '@middlewares/CookieSession.interceptor';
 
 import { AuthService } from '../auth/auth.service';
 import { LoginResponseType } from '../auth/types/login-response.type';
@@ -28,6 +31,7 @@ export class AuthTwitterController {
     groups: ['me'],
   })
   @Post('login')
+  @UseInterceptors(new CookieSessionInterceptor())
   @HttpCode(HttpStatus.OK)
   async login(
     @Body() loginDto: AuthTwitterLoginDto,

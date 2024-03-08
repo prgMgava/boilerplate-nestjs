@@ -1,9 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import { EntityDocumentHelper } from '@utils/document-entity-helper';
 import { HydratedDocument } from 'mongoose';
 
 import { AppConfig } from '@config/app-config.type';
+import { EntityDocumentHelper } from '@utils/document-entity-helper';
 
 import appConfig from '../../../../../config/app.config';
 

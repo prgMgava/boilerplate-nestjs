@@ -1,4 +1,3 @@
-import { EntityRelationalHelper } from '@utils/relational-entity-helper';
 import {
   CreateDateColumn,
   DeleteDateColumn,
@@ -7,6 +6,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
+import { EntityRelationalHelper } from '@utils/relational-entity-helper';
 
 import { UserEntity } from '../../../../../users/infrastructure/persistence/relational/entities/user.entity';
 import { Session } from '../../../../domain/session';

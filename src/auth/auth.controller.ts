@@ -10,9 +10,12 @@ import {
   Request,
   SerializeOptions,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
+
+import { CookieSessionInterceptor } from '@middlewares/CookieSession.interceptor';
 
 import { User } from '@users/domain/user';
 
@@ -42,7 +45,7 @@ export class AuthController {
     return this.service.confirmEmail(confirmEmailDto.hash);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @Delete('me')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -63,15 +66,17 @@ export class AuthController {
   })
   @Post('email/login')
   @HttpCode(HttpStatus.OK)
+  @UseInterceptors(new CookieSessionInterceptor())
   public login(
     @Body() loginDto: AuthEmailLoginDto,
   ): Promise<LoginResponseType> {
     return this.service.validateLogin(loginDto);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @Post('logout')
   @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(new CookieSessionInterceptor())
   @HttpCode(HttpStatus.NO_CONTENT)
   public async logout(@Request() request): Promise<void> {
     await this.service.logout({
@@ -79,7 +84,7 @@ export class AuthController {
     });
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @SerializeOptions({
     groups: ['me'],
   })
@@ -90,12 +95,13 @@ export class AuthController {
     return this.service.me(request.user);
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @SerializeOptions({
     groups: ['me'],
   })
   @Post('refresh')
   @UseGuards(AuthGuard('jwt-refresh'))
+  @UseInterceptors(new CookieSessionInterceptor())
   @HttpCode(HttpStatus.OK)
   public refresh(@Request() request): Promise<Omit<LoginResponseType, 'user'>> {
     return this.service.refreshToken({
@@ -118,7 +124,7 @@ export class AuthController {
     );
   }
 
-  @ApiBearerAuth()
+  @ApiCookieAuth()
   @SerializeOptions({
     groups: ['me'],
   })

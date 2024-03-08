@@ -41,7 +41,7 @@ export class User extends EntityRelationalHelper {
 
    // Some code here...
 
-   @ApiBearerAuth()
+   @ApiCookieAuth()
    @Roles(RoleEnum.admin)
    @UseGuards(AuthGuard('jwt'), RolesGuard)
    @Controller({

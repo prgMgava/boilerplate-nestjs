@@ -1,9 +1,10 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 
+import bcrypt from 'bcryptjs';
+
 import { DeepPartial } from '@utils/types/deep-partial.type';
 import { EntityCondition } from '@utils/types/entity-condition.type';
 import { IPaginationOptions } from '@utils/types/pagination-options';
-import bcrypt from 'bcryptjs';
 
 import { AuthProvidersEnum } from '@auth/auth-providers.enum';
 import { FilesService } from '@files/files.service';

@@ -1,7 +1,6 @@
 import { Injectable, LoggerService as NestLoggerService } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { Pool } from 'pg';
 import { Logger } from 'winston';
 
 import { loadLoggerConfig } from './config/logger.config';
@@ -18,7 +17,6 @@ enum WinstonLogLevel {
 
 @Injectable()
 export default class LoggerService implements NestLoggerService {
-  private pool: Pool;
   public logger: Logger;
 
   constructor(config: ConfigService) {

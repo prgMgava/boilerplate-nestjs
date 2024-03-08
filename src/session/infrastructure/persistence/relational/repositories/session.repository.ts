@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntityCondition } from '@utils/types/entity-condition.type';
 import { FindOptionsWhere, Not, Repository } from 'typeorm';
+
+import { EntityCondition } from '@utils/types/entity-condition.type';
 
 import { User } from '@users/domain/user';
 import { UserEntity } from '@users/infrastructure/persistence/relational/entities/user.entity';

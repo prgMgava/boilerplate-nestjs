@@ -1,9 +1,10 @@
 import { PartialType } from '@nestjs/swagger';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { lowerCaseTransformer } from '@utils/transformers/lower-case.transformer';
 import { Transform, Type } from 'class-transformer';
 import { IsEmail, IsOptional, MinLength } from 'class-validator';
+
+import { lowerCaseTransformer } from '@utils/transformers/lower-case.transformer';
 
 import { FileDto } from '@files/dto/file.dto';
 import { RoleDto } from '@roles/dto/role.dto';
