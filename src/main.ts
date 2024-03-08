@@ -8,6 +8,10 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { useContainer } from 'class-validator';
+import compression from 'compression';
+import helmet from 'helmet';
+
+import { shouldCompress } from '@core/compression';
 
 import { AppModule } from './app.module';
 import { AllConfigType } from './config/config.type';
@@ -39,6 +43,14 @@ async function bootstrap() {
   app.enableVersioning({
     type: VersioningType.URI,
   });
+  app.use(helmet());
+  app.use(
+    compression({
+      filter: shouldCompress,
+      //threshold: 1024,
+      threshold: 0,
+    }),
+  );
   app.useGlobalPipes(new ValidationPipe(validationOptions));
   app.useGlobalInterceptors(
     new ClassSerializerInterceptor(app.get(Reflector)),
