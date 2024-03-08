@@ -1,4 +1,14 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
+echo "🏁  Pre-commit startting..."
+branch="$(git rev-parse --abbrev-ref HEAD)"
+echo "🔎  Starting eslint..."
 npm run lint
+echo "✅  Eslint checking done"
+if [ "$branch" = "main" ]; then
+  echo -e "\n🐞  You can't commit directly to main branch"
+  echo -e "\n❌  Pre-commit failed!\n"
+  exit 1
+fi
+echo -e "\n✨  Pre-commit success!\n"
