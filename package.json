@@ -99,6 +99,7 @@
     "@types/passport-jwt": "4.0.0",
     "@types/supertest": "6.0.2",
     "@types/twitter": "1.7.4",
+    "@types/ua-parser-js": "^0.7.39",
     "@typescript-eslint/eslint-plugin": "6.18.1",
     "@typescript-eslint/parser": "6.18.1",
     "env-cmd": "10.1.0",

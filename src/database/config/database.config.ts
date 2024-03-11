@@ -15,34 +15,17 @@ import { DatabaseConfig } from '@database/config/database-config.type';
 import validateConfig from '../../utils/validate-config';
 
 class EnvironmentVariablesValidator {
+  @ValidateIf((envValues) => envValues.DATABASE_URL)
   @IsString()
-  @IsOptional()
-  DATABASE_CA: string;
+  DATABASE_URL: string;
 
+  @ValidateIf((envValues) => !envValues.DATABASE_URL)
   @IsString()
-  @IsOptional()
-  DATABASE_CERT: string;
+  DATABASE_TYPE: string;
 
   @ValidateIf((envValues) => !envValues.DATABASE_URL)
   @IsString()
   DATABASE_HOST: string;
-
-  @IsString()
-  @IsOptional()
-  DATABASE_KEY: string;
-
-  @IsInt()
-  @IsOptional()
-  DATABASE_MAX_CONNECTIONS: number;
-
-  @ValidateIf((envValues) => !envValues.DATABASE_URL)
-  @IsString()
-  DATABASE_NAME: string;
-
-  @ValidateIf((envValues) => !envValues.DATABASE_URL)
-  @IsString()
-  @IsOptional()
-  DATABASE_PASSWORD: string;
 
   @ValidateIf((envValues) => !envValues.DATABASE_URL)
   @IsInt()
@@ -51,9 +34,26 @@ class EnvironmentVariablesValidator {
   @IsOptional()
   DATABASE_PORT: number;
 
+  @ValidateIf((envValues) => !envValues.DATABASE_URL)
+  @IsString()
+  @IsOptional()
+  DATABASE_PASSWORD: string;
+
+  @ValidateIf((envValues) => !envValues.DATABASE_URL)
+  @IsString()
+  DATABASE_NAME: string;
+
+  @ValidateIf((envValues) => !envValues.DATABASE_URL)
+  @IsString()
+  DATABASE_USERNAME: string;
+
   @IsBoolean()
   @IsOptional()
-  DATABASE_REJECT_UNAUTHORIZED: boolean;
+  DATABASE_SYNCHRONIZE: boolean;
+
+  @IsInt()
+  @IsOptional()
+  DATABASE_MAX_CONNECTIONS: number;
 
   @IsBoolean()
   @IsOptional()
@@ -61,19 +61,19 @@ class EnvironmentVariablesValidator {
 
   @IsBoolean()
   @IsOptional()
-  DATABASE_SYNCHRONIZE: boolean;
+  DATABASE_REJECT_UNAUTHORIZED: boolean;
 
-  @ValidateIf((envValues) => !envValues.DATABASE_URL)
   @IsString()
-  DATABASE_TYPE: string;
+  @IsOptional()
+  DATABASE_CA: string;
 
-  @ValidateIf((envValues) => envValues.DATABASE_URL)
   @IsString()
-  DATABASE_URL: string;
+  @IsOptional()
+  DATABASE_KEY: string;
 
-  @ValidateIf((envValues) => !envValues.DATABASE_URL)
   @IsString()
-  DATABASE_USERNAME: string;
+  @IsOptional()
+  DATABASE_CERT: string;
 }
 
 export default registerAs<DatabaseConfig>('database', () => {

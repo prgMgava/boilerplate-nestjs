@@ -6,10 +6,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint/eslint-plugin', 'perfectionist'],
-  extends: [
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-  ],
+  extends: ['plugin:@typescript-eslint/recommended'],
   root: true,
   env: {
     node: true,
@@ -36,25 +33,6 @@ module.exports = {
       },
     ],
     'perfectionist/sort-interfaces': 'error',
-    'perfectionist/sort-classes': [
-      'error',
-      {
-        type: 'natural',
-        order: 'asc',
-        groups: [
-          'index-signature',
-          'static-property',
-          'private-property',
-          'property',
-          'constructor',
-          'static-method',
-          'private-method',
-          'decorated-method',
-          'method',
-          ['get-method', 'set-method'],
-        ],
-      },
-    ],
     'perfectionist/sort-enums': [
       'error',
       {

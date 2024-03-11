@@ -512,6 +512,7 @@ export class AuthService {
   async validateSocialLogin(
     authProvider: string,
     socialData: SocialInterface,
+    refreshTokenPayload: Partial<RefreshToken>,
   ): Promise<LoginResponseType> {
     let user: NullableType<User> = null;
     const socialEmail = socialData.email?.toLowerCase();
@@ -581,6 +582,7 @@ export class AuthService {
       token: jwtToken,
       tokenExpires,
     } = await this.getTokensData({
+      refreshTokenPayload,
       sessionId: session.id,
       user: user,
     });
