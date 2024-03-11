@@ -9,6 +9,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { useContainer } from 'class-validator';
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 
 import { shouldCompress } from '@core/compression';
@@ -44,6 +45,7 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
   app.use(helmet());
+  app.use(cookieParser());
   app.use(
     compression({
       filter: shouldCompress,

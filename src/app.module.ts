@@ -5,9 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import path from 'path';
 
-import { HeaderResolver } from 'nestjs-i18n';
+import { CookieResolver, HeaderResolver } from 'nestjs-i18n';
 import { I18nModule } from 'nestjs-i18n/dist/i18n.module';
 import { DataSource, DataSourceOptions } from 'typeorm';
+
+import { RefreshTokenModule } from '@refresh-token/refresh-token.module';
 
 import { AuthAppleModule } from './auth-apple/auth-apple.module';
 import appleConfig from './auth-apple/config/apple.config';
@@ -77,6 +79,7 @@ import { UsersModule } from './users/users.module';
             ];
           },
         },
+        new CookieResolver(['lang', 'locale', 'l']),
       ],
       useFactory: (configService: ConfigService<AllConfigType>) => ({
         fallbackLanguage: configService.getOrThrow('app.fallbackLanguage', {
@@ -97,6 +100,7 @@ import { UsersModule } from './users/users.module';
     MailerModule,
     HomeModule,
     LoggerModule,
+    RefreshTokenModule,
   ],
 })
 export class AppModule {}

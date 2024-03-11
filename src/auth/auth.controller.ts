@@ -7,7 +7,8 @@ import {
   HttpStatus,
   Patch,
   Post,
-  Request,
+  Req,
+  Res,
   SerializeOptions,
   UseGuards,
   UseInterceptors,
@@ -15,8 +16,11 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 
+import { UAParser } from 'ua-parser-js';
+
 import { CookieSessionInterceptor } from '@middlewares/CookieSession.interceptor';
 
+import { RefreshToken } from '@refresh-token/domain/refresh-token';
 import { User } from '@users/domain/user';
 
 import { NullableType } from '../utils/types/nullable.type';
@@ -49,8 +53,8 @@ export class AuthController {
   @Delete('me')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async delete(@Request() request): Promise<void> {
-    return this.service.softDelete(request.user);
+  public async delete(@Req() request): Promise<void> {
+    return this.service.softDelete(request);
   }
 
   @Post('forgot/password')
@@ -69,8 +73,22 @@ export class AuthController {
   @UseInterceptors(new CookieSessionInterceptor())
   public login(
     @Body() loginDto: AuthEmailLoginDto,
+    @Req() req,
+    @Res() res,
   ): Promise<LoginResponseType> {
-    return this.service.validateLogin(loginDto);
+    const ua = UAParser(req.headers['user-agent']);
+    const refreshTokenPayload: Partial<RefreshToken> = {
+      browser: ua.browser.name,
+      ip: req.id,
+      os: ua.os.name,
+      userAgent: JSON.stringify(ua),
+    };
+    const cookiePayload = this.service.validateLogin(
+      loginDto,
+      refreshTokenPayload,
+    );
+    res.setHeader('Set-Cookie', cookiePayload);
+    return cookiePayload;
   }
 
   @ApiCookieAuth()
@@ -78,10 +96,18 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @UseInterceptors(new CookieSessionInterceptor())
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async logout(@Request() request): Promise<void> {
-    await this.service.logout({
-      sessionId: request.user.sessionId,
-    });
+  public async logout(@Req() req, @Res() response): Promise<void> {
+    try {
+      const cookie = req.cookies['Refresh'];
+      response.setHeader('Set-Cookie', this.service.getCookieForLogOut());
+      const refreshCookie = req.cookies['Refresh'];
+      if (refreshCookie) {
+        await this.service.revokeRefreshToken(cookie);
+      }
+      return response.sendStatus(HttpStatus.NO_CONTENT);
+    } catch (e) {
+      return response.sendStatus(HttpStatus.NO_CONTENT);
+    }
   }
 
   @ApiCookieAuth()
@@ -91,7 +117,7 @@ export class AuthController {
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
-  public me(@Request() request): Promise<NullableType<User>> {
+  public me(@Req() request): Promise<NullableType<User>> {
     return this.service.me(request.user);
   }
 
@@ -100,13 +126,24 @@ export class AuthController {
     groups: ['me'],
   })
   @Post('refresh')
-  @UseGuards(AuthGuard('jwt-refresh'))
+  //@UseGuards(AuthGuard('jwt-refresh'))
   @UseInterceptors(new CookieSessionInterceptor())
   @HttpCode(HttpStatus.OK)
-  public refresh(@Request() request): Promise<Omit<LoginResponseType, 'user'>> {
-    return this.service.refreshToken({
-      sessionId: request.user.sessionId,
-    });
+  public async refresh(
+    @Req() req,
+    @Res() response,
+  ): Promise<Omit<LoginResponseType, 'user'>> {
+    try {
+      const cookiePayload =
+        await this.service.createAccessTokenFromRefreshToken(
+          req.cookies['Refresh'],
+        );
+      response.setHeader('Set-Cookie', cookiePayload);
+      return response.status(HttpStatus.NO_CONTENT).json({});
+    } catch (e) {
+      response.setHeader('Set-Cookie', this.service.getCookieForLogOut());
+      return response.sendStatus(HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Post('email/register')
@@ -132,7 +169,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   public update(
-    @Request() request,
+    @Req() request,
     @Body() userDto: AuthUpdateDto,
   ): Promise<NullableType<User>> {
     return this.service.update(request.user, userDto);

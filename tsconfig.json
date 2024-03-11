@@ -82,6 +82,15 @@
       "@core/*": [
         "./src/core/*"
       ],
+      "@exception/*": [
+        "./src/exception/*"
+      ],
+      "@common/*": [
+        "./src/common/*"
+      ],
+      "@refresh-token/*": [
+        "./src/refresh-token/*"
+      ],
     }
   }
 }

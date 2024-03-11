@@ -101,6 +101,7 @@ module.exports = {
               '@social/**',
               '@statuses/**',
               '@users/**',
+              '@refresh-token/**',
             ],
             services: ['@mail**/**'],
           },
@@ -112,7 +113,9 @@ module.exports = {
         'internal-pattern': [
           '@config/**',
           '@core/**',
+          '@common/**',
           '@middlewares/**',
+          '@exception/**',
           '@database/**',
           '@logger/**',
           '@utils/**',
