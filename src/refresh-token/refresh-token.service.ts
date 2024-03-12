@@ -208,7 +208,7 @@ export class RefreshTokenService {
    * @param userId
    */
   async revokeRefreshTokenById(
-    id: number,
+    id: number | string,
     userId: number,
   ): Promise<RefreshToken> {
     const token = await this.refreshTokenRepository.findOne({ id });

@@ -41,7 +41,7 @@ export class RefreshTokenEntity
   ip?: string;
 
   @Column()
-  isRevoked: boolean;
+  isRevoked?: boolean;
 
   @Index()
   @Column({
