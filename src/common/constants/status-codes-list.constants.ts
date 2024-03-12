@@ -18,4 +18,5 @@ export const StatusCodesList = {
   UnsupportedFileType: 1016,
   UserInactive: 1012,
   ValidationError: 1002,
+  UnprocessableEntity: 1019,
 } as const;

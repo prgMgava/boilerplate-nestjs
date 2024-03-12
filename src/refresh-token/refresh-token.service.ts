@@ -26,9 +26,9 @@ import { RefreshTokenRepository } from './infrastructure/persistence/refresh-tok
 @Injectable()
 export class RefreshTokenService {
   constructor(
+    private readonly jwt: JwtService,
     private readonly refreshTokenRepository: RefreshTokenRepository,
     private readonly userService: UsersService,
-    private readonly jwt: JwtService,
     private configService: ConfigService<AllConfigType>,
   ) {}
 
@@ -124,6 +124,7 @@ export class RefreshTokenService {
         expiresIn: this.configService.getOrThrow('auth.refreshExpires', {
           infer: true,
         }),
+        secret: this.configService.getOrThrow('auth.secret', { infer: true }),
       },
     );
   }

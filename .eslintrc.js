@@ -53,6 +53,7 @@ module.exports = {
         type: 'alphabetical',
         order: 'asc',
         groups: [
+          'loader',
           'nestjs',
           'builtin',
           'external',
@@ -69,7 +70,8 @@ module.exports = {
         ],
         'custom-groups': {
           value: {
-            nestjs: '@nestjs**/**',
+            loader: 'dotenv/**',
+            nestjs: ['@nestjs**/**'],
             api: [
               '@auth*/**',
               '@files/**',
@@ -93,24 +95,13 @@ module.exports = {
           '@core/**',
           '@common/**',
           '@middlewares/**',
+          '@pipes/**',
           '@exception/**',
           '@database/**',
           '@logger/**',
           '@utils/**',
           '@i18n/**',
         ],
-      },
-    ],
-    'perfectionist/sort-objects': [
-      'error',
-      {
-        type: 'alphabetical',
-        order: 'asc',
-        'partition-by-comment': 'Part:**',
-        groups: ['id', 'unknown'],
-        'custom-groups': {
-          id: 'id',
-        },
       },
     ],
   },

@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import {
   ClassSerializerInterceptor,
   ValidationPipe,
@@ -16,11 +18,8 @@ import { shouldCompress } from '@core/compression';
 
 import { AppModule } from './app.module';
 import { AllConfigType } from './config/config.type';
-import LoggerService from './logger/logger.service';
-import { ErrorHandler, ResponseHandler } from './middlewares';
+import { ResponseHandler } from './middlewares';
 import validationOptions from './utils/validation-options';
-
-import 'dotenv/config';
 
 async function bootstrap() {
   const allowedOrigins =
@@ -58,7 +57,6 @@ async function bootstrap() {
     new ClassSerializerInterceptor(app.get(Reflector)),
     new ResponseHandler(),
   );
-  app.useGlobalFilters(new ErrorHandler(app.get(LoggerService)));
 
   const options = new DocumentBuilder()
     .setTitle('API')

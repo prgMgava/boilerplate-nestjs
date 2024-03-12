@@ -91,6 +91,9 @@
       "@refresh-token/*": [
         "./src/refresh-token/*"
       ],
+      "@pipes/*": [
+        "./src/pipes/*"
+      ],
     }
   }
 }

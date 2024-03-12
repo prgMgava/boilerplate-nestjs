@@ -69,26 +69,25 @@ export class AuthController {
     groups: ['me'],
   })
   @Post('email/login')
-  @HttpCode(HttpStatus.OK)
-  @UseInterceptors(new CookieSessionInterceptor())
-  public login(
+  @HttpCode(HttpStatus.NO_CONTENT)
+  //@UseInterceptors(new CookieSessionInterceptor())
+  public async login(
     @Body() loginDto: AuthEmailLoginDto,
     @Req() req,
-    @Res() res,
-  ): Promise<LoginResponseType> {
+    @Res({ passthrough: true }) res,
+  ): Promise<void> {
     const ua = UAParser(req.headers['user-agent']);
     const refreshTokenPayload: Partial<RefreshToken> = {
       browser: ua.browser.name,
-      ip: req.id,
+      ip: req.ip,
       os: ua.os.name,
       userAgent: JSON.stringify(ua),
     };
-    const cookiePayload = this.service.validateLogin(
+    const cookiePayload = await this.service.validateLogin(
       loginDto,
       refreshTokenPayload,
     );
     res.setHeader('Set-Cookie', cookiePayload);
-    return cookiePayload;
   }
 
   @ApiCookieAuth()
@@ -147,7 +146,7 @@ export class AuthController {
   }
 
   @Post('email/register')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.CREATED)
   async register(@Body() createUserDto: AuthRegisterLoginDto): Promise<void> {
     return this.service.register(createUserDto);
   }

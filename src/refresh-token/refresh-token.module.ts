@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 
 import { RefreshTokenService } from 'src/refresh-token/refresh-token.service';
 
@@ -11,7 +12,11 @@ const infrastructurePersistenceModule = RelationalUserPersistenceModule;
 @Module({
   controllers: [],
   exports: [RefreshTokenService, infrastructurePersistenceModule],
-  imports: [infrastructurePersistenceModule, UsersModule],
+  imports: [
+    infrastructurePersistenceModule,
+    UsersModule,
+    JwtModule.register({}),
+  ],
   providers: [RefreshTokenService],
 })
 export class RefreshTokenModule {}

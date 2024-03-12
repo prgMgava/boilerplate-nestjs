@@ -86,11 +86,10 @@ export class AuthService {
     const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
       infer: true,
     });
-    const cookieExpiresIn = this.configService.getOrThrow(
-      'auth.cookieExpires',
-      {
+    const cookieExpiresIn = ms(
+      this.configService.getOrThrow('auth.cookieExpires', {
         infer: true,
-      },
+      }),
     );
     const isSameSite = this.configService.getOrThrow('auth.isSameSite', {
       infer: true,
@@ -438,32 +437,24 @@ export class AuthService {
   async validateLogin(
     loginDto: AuthEmailLoginDto,
     refreshTokenPayload: Partial<RefreshToken>,
-  ): Promise<LoginResponseType> {
+  ): Promise<string[]> {
     const user = await this.usersService.findOne({
       email: loginDto.email,
     });
 
     if (!user) {
-      throw new HttpException(
-        {
-          errors: {
-            email: 'notFound',
-          },
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+      throw new CustomHttpException(
+        ExceptionTitleList.EmailNotFound,
+        HttpStatus.NOT_FOUND,
+        StatusCodesList.NotFound,
       );
     }
 
     if (user.provider !== AuthProvidersEnum.email) {
-      throw new HttpException(
-        {
-          errors: {
-            email: `needLoginViaProvider:${user.provider}`,
-          },
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-        },
+      throw new CustomHttpException(
+        `${ExceptionTitleList.NeedLoginViaProvider}-{"provider": "${user.provider}"}`,
         HttpStatus.UNPROCESSABLE_ENTITY,
+        StatusCodesList.UnprocessableEntity,
       );
     }
 
@@ -500,13 +491,13 @@ export class AuthService {
       user,
     });
 
-    const { refreshToken, token, tokenExpires } = await this.getTokensData({
+    const { refreshToken, token } = await this.getTokensData({
       refreshTokenPayload,
       sessionId: session.id,
       user: user,
     });
 
-    return { refreshToken, token, tokenExpires, user };
+    return this.buildResponsePayload(token, refreshToken);
   }
 
   async validateSocialLogin(

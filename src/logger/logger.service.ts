@@ -20,7 +20,7 @@ export default class LoggerService implements NestLoggerService {
   public logger: Logger;
 
   constructor(config: ConfigService) {
-    loadLoggerConfig(this.logger, config);
+    this.logger = loadLoggerConfig(config);
   }
 
   debug?(message: any) {
