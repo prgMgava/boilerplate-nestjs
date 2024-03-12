@@ -50,7 +50,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
   public async delete(@Req() request): Promise<void> {
-    return this.service.softDelete(request);
+    return this.service.softDelete(request.user);
   }
 
   @Post('forgot/password')
