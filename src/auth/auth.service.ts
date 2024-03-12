@@ -1,19 +1,20 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 
 import bcrypt from 'bcryptjs';
 import ms from 'ms';
 
+import { ExceptionTitleList } from '@common/constants/exception-title-list.constants';
+import { StatusCodesList } from '@common/constants/status-codes-list.constants';
 import { AllConfigType } from '@config/config.type';
+import { CustomHttpException } from '@exception/custom-http.exception';
+import { NotFoundException } from '@exception/not-found.exception';
 
 import { MailService } from '@mail/mail.service';
 
+import { RefreshToken } from '@refresh-token/domain/refresh-token';
+import { RefreshTokenService } from '@refresh-token/refresh-token.service';
 import { RoleEnum } from '@roles/roles.enum';
 import { Session } from '@session/domain/session';
 import { SessionService } from '@session/session.service';
@@ -39,24 +40,24 @@ export class AuthService {
     private sessionService: SessionService,
     private mailService: MailService,
     private configService: ConfigService<AllConfigType>,
+    private refreshTokenService: RefreshTokenService,
   ) {}
 
   private async getTokensData(data: {
-    id: User['id'];
-    role: User['role'];
     sessionId: Session['id'];
+    user: User;
+    refreshTokenPayload: Partial<RefreshToken>;
   }) {
     const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
       infer: true,
     });
-
     const tokenExpires = Date.now() + ms(tokenExpiresIn);
 
     const [token, refreshToken] = await Promise.all([
       await this.jwtService.signAsync(
         {
-          id: data.id,
-          role: data.role,
+          id: data.user.id,
+          role: data.user.role,
           sessionId: data.sessionId,
         },
         {
@@ -64,18 +65,9 @@ export class AuthService {
           secret: this.configService.getOrThrow('auth.secret', { infer: true }),
         },
       ),
-      await this.jwtService.signAsync(
-        {
-          sessionId: data.sessionId,
-        },
-        {
-          expiresIn: this.configService.getOrThrow('auth.refreshExpires', {
-            infer: true,
-          }),
-          secret: this.configService.getOrThrow('auth.refreshSecret', {
-            infer: true,
-          }),
-        },
+      await this.refreshTokenService.generateRefreshToken(
+        data.user,
+        data.refreshTokenPayload,
       ),
     ]);
 
@@ -84,6 +76,42 @@ export class AuthService {
       token,
       tokenExpires,
     };
+  }
+
+  /**
+   * build response payload
+   * @param accessToken
+   * @param refreshToken
+   */
+  buildResponsePayload(accessToken: string, refreshToken?: string): string[] {
+    const tokenExpiresIn = this.configService.getOrThrow('auth.expires', {
+      infer: true,
+    });
+    const cookieExpiresIn = ms(
+      this.configService.getOrThrow('auth.cookieExpires', {
+        infer: true,
+      }),
+    );
+    const isSameSite = this.configService.getOrThrow('auth.isSameSite', {
+      infer: true,
+    });
+    const tokenExpires = Date.now() + ms(tokenExpiresIn);
+    let tokenCookies = [
+      `Authentication=${accessToken}; HttpOnly; Path=/; ${
+        !isSameSite ? 'SameSite=None; Secure;' : ''
+      } Max-Age=${cookieExpiresIn}`,
+    ];
+    if (refreshToken) {
+      tokenCookies = tokenCookies.concat([
+        `Refresh=${refreshToken}; HttpOnly; Path=/; ${
+          !isSameSite ? 'SameSite=None; Secure;' : ''
+        } Max-Age=${cookieExpiresIn}`,
+        `ExpiresIn=${tokenExpires}; Path=/; ${
+          !isSameSite ? 'SameSite=None; Secure;' : ''
+        } Max-Age=${cookieExpiresIn}`,
+      ]);
+    }
+    return tokenCookies;
   }
 
   async confirmEmail(hash: string): Promise<void> {
@@ -100,6 +128,7 @@ export class AuthService {
 
       userId = jwtData.confirmEmailUserId;
     } catch {
+      throw new CustomHttpException();
       throw new HttpException(
         {
           errors: {
@@ -130,6 +159,18 @@ export class AuthService {
     };
 
     await this.usersService.update(user.id, user);
+  }
+
+  /**
+   * Create access token from refresh token
+   * @param refreshToken
+   */
+  async createAccessTokenFromRefreshToken(refreshToken: string) {
+    const { token } =
+      await this.refreshTokenService.createAccessTokenFromRefreshToken(
+        refreshToken,
+      );
+    return this.buildResponsePayload(token);
   }
 
   async forgotPassword(email: string): Promise<void> {
@@ -171,6 +212,25 @@ export class AuthService {
     });
   }
 
+  /**
+   * Get cookie for logout action
+   */
+  getCookieForLogOut(): string[] {
+    const isSameSite = this.configService.getOrThrow('auth.isSameSite', {
+      infer: true,
+    });
+    return [
+      `Authentication=; HttpOnly; Path=/; Max-Age=0; ${
+        !isSameSite ? 'SameSite=None; Secure;' : ''
+      }`,
+      `Refresh=; HttpOnly; Path=/; Max-Age=0; ${
+        !isSameSite ? 'SameSite=None; Secure;' : ''
+      }`,
+      `ExpiresIn=; Path=/; Max-Age=0; ${
+        !isSameSite ? 'SameSite=None; Secure;' : ''
+      }`,
+    ];
+  }
   async logout(data: Pick<JwtRefreshPayloadType, 'sessionId'>) {
     return this.sessionService.softDelete({
       id: data.sessionId,
@@ -181,30 +241,6 @@ export class AuthService {
     return this.usersService.findOne({
       id: userJwtPayload.id,
     });
-  }
-
-  async refreshToken(
-    data: Pick<JwtRefreshPayloadType, 'sessionId'>,
-  ): Promise<Omit<LoginResponseType, 'user'>> {
-    const session = await this.sessionService.findOne({
-      id: data.sessionId,
-    });
-
-    if (!session) {
-      throw new UnauthorizedException();
-    }
-
-    const { refreshToken, token, tokenExpires } = await this.getTokensData({
-      id: session.user.id,
-      role: session.user.role,
-      sessionId: session.id,
-    });
-
-    return {
-      refreshToken,
-      token,
-      tokenExpires,
-    };
   }
 
   async register(dto: AuthRegisterLoginDto): Promise<void> {
@@ -293,6 +329,32 @@ export class AuthService {
     await this.usersService.update(user.id, user);
   }
 
+  /**
+   * revoke refresh token for logout action
+   * @param encoded
+   */
+  async revokeRefreshToken(encoded: string): Promise<void> {
+    // ignore exception because anyway we are going invalidate cookies
+    try {
+      const { token } =
+        await this.refreshTokenService.resolveRefreshToken(encoded);
+      if (token) {
+        token.isRevoked = true;
+
+        await this.refreshTokenService.revokeRefreshTokenById(
+          token.id,
+          token.userId,
+        );
+      }
+    } catch (e) {
+      throw new CustomHttpException(
+        ExceptionTitleList.InvalidRefreshToken,
+        HttpStatus.PRECONDITION_FAILED,
+        StatusCodesList.UnprocessableEntity,
+      );
+    }
+  }
+
   async softDelete(user: User): Promise<void> {
     await this.usersService.softDelete(user.id);
   }
@@ -303,14 +365,10 @@ export class AuthService {
   ): Promise<NullableType<User>> {
     if (userDto.password) {
       if (!userDto.oldPassword) {
-        throw new HttpException(
-          {
-            errors: {
-              oldPassword: 'missingOldPassword',
-            },
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
+        throw new CustomHttpException(
+          ExceptionTitleList.OldPasswordRequired,
+          HttpStatus.BAD_REQUEST,
+          StatusCodesList.BadRequest,
         );
       }
 
@@ -319,26 +377,17 @@ export class AuthService {
       });
 
       if (!currentUser) {
-        throw new HttpException(
-          {
-            errors: {
-              user: 'userNotFound',
-            },
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
+        throw new NotFoundException(
+          ExceptionTitleList.UserNotFound,
+          HttpStatus.NOT_FOUND,
         );
       }
 
       if (!currentUser.password) {
-        throw new HttpException(
-          {
-            errors: {
-              oldPassword: 'incorrectOldPassword',
-            },
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-          },
+        throw new CustomHttpException(
+          ExceptionTitleList.IncorrectOldPassword,
           HttpStatus.UNPROCESSABLE_ENTITY,
+          StatusCodesList.UnprocessableEntity,
         );
       }
 
@@ -348,14 +397,10 @@ export class AuthService {
       );
 
       if (!isValidOldPassword) {
-        throw new HttpException(
-          {
-            errors: {
-              oldPassword: 'incorrectOldPassword',
-            },
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-          },
+        throw new CustomHttpException(
+          ExceptionTitleList.IncorrectOldPassword,
           HttpStatus.UNPROCESSABLE_ENTITY,
+          StatusCodesList.UnprocessableEntity,
         );
       } else {
         await this.sessionService.softDelete({
@@ -374,32 +419,27 @@ export class AuthService {
     });
   }
 
-  async validateLogin(loginDto: AuthEmailLoginDto): Promise<LoginResponseType> {
+  async validateLogin(
+    loginDto: AuthEmailLoginDto,
+    refreshTokenPayload: Partial<RefreshToken>,
+  ): Promise<string[]> {
     const user = await this.usersService.findOne({
       email: loginDto.email,
     });
 
     if (!user) {
-      throw new HttpException(
-        {
-          errors: {
-            email: 'notFound',
-          },
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
+      throw new CustomHttpException(
+        ExceptionTitleList.EmailNotFound,
+        HttpStatus.NOT_FOUND,
+        StatusCodesList.NotFound,
       );
     }
 
     if (user.provider !== AuthProvidersEnum.email) {
-      throw new HttpException(
-        {
-          errors: {
-            email: `needLoginViaProvider:${user.provider}`,
-          },
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-        },
+      throw new CustomHttpException(
+        `${ExceptionTitleList.NeedLoginViaProvider}-{"provider": "${user.provider}"}`,
         HttpStatus.UNPROCESSABLE_ENTITY,
+        StatusCodesList.UnprocessableEntity,
       );
     }
 
@@ -436,18 +476,19 @@ export class AuthService {
       user,
     });
 
-    const { refreshToken, token, tokenExpires } = await this.getTokensData({
-      id: user.id,
-      role: user.role,
+    const { refreshToken, token } = await this.getTokensData({
+      refreshTokenPayload,
       sessionId: session.id,
+      user: user,
     });
 
-    return { refreshToken, token, tokenExpires, user };
+    return this.buildResponsePayload(token, refreshToken);
   }
 
   async validateSocialLogin(
     authProvider: string,
     socialData: SocialInterface,
+    refreshTokenPayload: Partial<RefreshToken>,
   ): Promise<LoginResponseType> {
     let user: NullableType<User> = null;
     const socialEmail = socialData.email?.toLowerCase();
@@ -517,9 +558,9 @@ export class AuthService {
       token: jwtToken,
       tokenExpires,
     } = await this.getTokensData({
-      id: user.id,
-      role: user.role,
+      refreshTokenPayload,
       sessionId: session.id,
+      user: user,
     });
 
     return {

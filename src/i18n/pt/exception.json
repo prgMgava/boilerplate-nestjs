@@ -1,0 +1,33 @@
+{
+  "sec": {
+    "one": "segundo",
+    "other": "segundos",
+    "zero": "segundo"
+  },
+  "Unauthorized": "Não autorizado",
+  "internalError": "Erro interno do servidor!",
+  "otpRequired": "OTP necessário",
+  "invalidOTP": "OTP inválido",
+  "inactiveUser": "Sua conta ainda não foi ativada!",
+  "invalidCredentials": "Credencial não corresponde!",
+  "Forbidden": "Acesso ao recurso solicitado é proibido!",
+  "userInactive": "Usuário está inativo, por favor, entre em contato com o administrador para obter ajuda adicional!",
+  "Not Found": "Dados não encontrados!",
+  "tokenExpired": "Sua sessão expirou!",
+  "unsupportedFileType": "Tipo de arquivo enviado não é suportado!",
+  "incorrectOldPassword": "Senha antiga incorreta!",
+  "badRequest": "Solicitação inválida, ocorreu algum erro, por favor, tente novamente mais tarde!",
+  "tooManyRequest": "Muitas tentativas, tente novamente após {second} $t(exception.sec, {{\"count\": {second} }})!",
+  "invalidRefreshToken": "Token de atualização inválido!",
+  "deleteDefaultError": "Não é possível excluir o item padrão!",
+  "refreshTokenExpired": "O token de atualização expirou!",
+  "tooManyTries": "Muitas tentativas!",
+  "emailAlreadyExists": "Email já existe",
+  "imageNotExists": "Imagem não existe",
+  "roleNotExists": "Cargo não existe",
+  "statusNotExists": "Status não existe",
+  "emailNotFound": "Email não encontrado",
+  "needLoginViaProvider": "Login provider inválido",
+  "oldPasswordRequired": "Senha anterior é obrigatória",
+  "userNotFound": "Usuário não encontrado"
+}

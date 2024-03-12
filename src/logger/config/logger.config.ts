@@ -1,15 +1,12 @@
 import { ConfigService } from '@nestjs/config';
 
-import fs from 'fs';
-
-import { createLogger, format, Logger, transports } from 'winston';
+import { Logtail } from '@logtail/node';
+import { LogtailTransport } from '@logtail/winston';
+import { createLogger, format, transports } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 
-//import { Logtail } from '@logtail/node';
-//import { LogtailTransport } from '@logtail/winston';
-
-export const loadLoggerConfig = (logger: Logger, config: ConfigService) => {
-  const { colorize, combine, label, printf, timestamp } = format;
+export const loadLoggerConfig = (config: ConfigService) => {
+  const { combine, label, printf, timestamp } = format;
 
   const customLoggerFormat = printf(
     ({
@@ -27,28 +24,20 @@ export const loadLoggerConfig = (logger: Logger, config: ConfigService) => {
     },
   );
 
-  const dir = '../logs';
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-    fs.mkdirSync(`${dir}/error`);
-    fs.mkdirSync(`${dir}/info`);
-    fs.mkdirSync(`${dir}/combined`);
-  }
-
   const fileRotateTransportError = new DailyRotateFile({
-    datePattern: 'YYYY-MM-DD',
-    dirname: '../logs/error',
-    filename: `log-%DATE%.log`,
     level: 'error',
+    datePattern: 'YYYY-MM-DD',
+    dirname: `./logs/error`,
+    filename: `log-error-%DATE%.log`,
     maxSize: process.env.LOG_MAX_SIZE || '20m',
     zippedArchive: true,
   });
 
   const fileRotateTransportInfo = new DailyRotateFile({
-    datePattern: 'YYYY-MM-DD',
-    dirname: '../logs/info',
-    filename: `log-%DATE%.log`,
     level: 'info',
+    datePattern: 'YYYY-MM-DD',
+    dirname: `./logs/info`,
+    filename: `log-info-%DATE%.log`,
     maxFiles: process.env.LOG_MAX_DAYS || '14d',
     maxSize: process.env.LOG_MAX_SIZE || '20m',
     zippedArchive: true,
@@ -56,41 +45,39 @@ export const loadLoggerConfig = (logger: Logger, config: ConfigService) => {
 
   const fileRotateTransportCombined = new DailyRotateFile({
     datePattern: 'YYYY-MM-DD',
-    dirname: '../logs/combined',
+    dirname: './logs/combined',
     filename: `log-%DATE%.log`,
     maxFiles: process.env.LOG_MAX_DAYS || '14d',
     maxSize: process.env.LOG_MAX_SIZE || '20m',
     zippedArchive: true,
   });
 
-  //const logTail = logTailTransport(fileRotateTransportCombined);
+  const logTail = logTailTransport(fileRotateTransportCombined);
 
-  logger = createLogger({
+  return createLogger({
     format: combine(
-      colorize({ all: true }),
       label({ label: config.get('app.name') }),
-      timestamp(),
+      timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
       customLoggerFormat,
     ),
     transports: [
-      new transports.Console(),
-      fileRotateTransportCombined,
+      new transports.Console({}),
       fileRotateTransportError,
       fileRotateTransportInfo,
-      //new LogtailTransport(logTail, {level: 'error'}),
+      new LogtailTransport(logTail, { level: 'error' }),
     ],
   });
 };
 
-// const logTailTransport = (
-//   fileRotateTransportCombined: DailyRotateFile,
-// ): Logtail => {
-//   // Checkout the docs #logs.md for more information
-//   const logTail = new Logtail(process.env.LOG_TAIL_TOKEN as string);
+const logTailTransport = (
+  fileRotateTransportCombined: DailyRotateFile,
+): Logtail => {
+  // Checkout the docs #logs.md for more information
+  const logTail = new Logtail(process.env.LOG_TAIL_TOKEN as string);
 
-//   fileRotateTransportCombined.on('new', async () => {
-//     await logTail.flush();
-//   });
+  fileRotateTransportCombined.on('new', async () => {
+    await logTail.flush();
+  });
 
-//   return logTail;
-// };
+  return logTail;
+};

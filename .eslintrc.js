@@ -6,10 +6,7 @@ module.exports = {
     sourceType: 'module',
   },
   plugins: ['@typescript-eslint/eslint-plugin', 'perfectionist'],
-  extends: [
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-  ],
+  extends: ['plugin:@typescript-eslint/recommended'],
   root: true,
   env: {
     node: true,
@@ -36,25 +33,6 @@ module.exports = {
       },
     ],
     'perfectionist/sort-interfaces': 'error',
-    'perfectionist/sort-classes': [
-      'error',
-      {
-        type: 'natural',
-        order: 'asc',
-        groups: [
-          'index-signature',
-          'static-property',
-          'private-property',
-          'property',
-          'constructor',
-          'static-method',
-          'private-method',
-          'decorated-method',
-          'method',
-          ['get-method', 'set-method'],
-        ],
-      },
-    ],
     'perfectionist/sort-enums': [
       'error',
       {
@@ -75,6 +53,7 @@ module.exports = {
         type: 'alphabetical',
         order: 'asc',
         groups: [
+          'loader',
           'nestjs',
           'builtin',
           'external',
@@ -91,7 +70,8 @@ module.exports = {
         ],
         'custom-groups': {
           value: {
-            nestjs: '@nestjs**/**',
+            loader: 'dotenv/**',
+            nestjs: ['@nestjs**/**'],
             api: [
               '@auth*/**',
               '@files/**',
@@ -101,6 +81,7 @@ module.exports = {
               '@social/**',
               '@statuses/**',
               '@users/**',
+              '@refresh-token/**',
             ],
             services: ['@mail**/**'],
           },
@@ -112,24 +93,15 @@ module.exports = {
         'internal-pattern': [
           '@config/**',
           '@core/**',
+          '@common/**',
           '@middlewares/**',
+          '@pipes/**',
+          '@exception/**',
           '@database/**',
           '@logger/**',
           '@utils/**',
           '@i18n/**',
         ],
-      },
-    ],
-    'perfectionist/sort-objects': [
-      'error',
-      {
-        type: 'alphabetical',
-        order: 'asc',
-        'partition-by-comment': 'Part:**',
-        groups: ['id', 'unknown'],
-        'custom-groups': {
-          id: 'id',
-        },
       },
     ],
   },

@@ -1,13 +1,22 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_FILTER } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import path from 'path';
 
-import { HeaderResolver } from 'nestjs-i18n';
+import {
+  AcceptLanguageResolver,
+  CookieResolver,
+  QueryResolver,
+} from 'nestjs-i18n';
 import { I18nModule } from 'nestjs-i18n/dist/i18n.module';
 import { DataSource, DataSourceOptions } from 'typeorm';
+
+import { I18nExceptionFilterPipe } from '@pipes/i18n-exception-filter.pipe';
+
+import { RefreshTokenModule } from '@refresh-token/refresh-token.module';
 
 import { AuthAppleModule } from './auth-apple/auth-apple.module';
 import appleConfig from './auth-apple/config/apple.config';
@@ -63,27 +72,22 @@ import { UsersModule } from './users/users.module';
           useClass: TypeOrmConfigService,
         }),
     I18nModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      resolvers: [
-        {
-          inject: [ConfigService],
-          use: HeaderResolver,
-          useFactory: (configService: ConfigService<AllConfigType>) => {
-            return [
-              configService.get('app.headerLanguage', {
-                infer: true,
-              }),
-            ];
-          },
-        },
-      ],
       useFactory: (configService: ConfigService<AllConfigType>) => ({
         fallbackLanguage: configService.getOrThrow('app.fallbackLanguage', {
           infer: true,
         }),
         loaderOptions: { path: path.join(__dirname, '/i18n/'), watch: true },
       }),
+      resolvers: [
+        {
+          use: QueryResolver,
+          options: ['lang'],
+        },
+        AcceptLanguageResolver,
+        new CookieResolver(['lang', 'locale', 'l']),
+      ],
+      imports: [ConfigModule],
+      inject: [ConfigService],
     }),
     UsersModule,
     FilesModule,
@@ -97,6 +101,13 @@ import { UsersModule } from './users/users.module';
     MailerModule,
     HomeModule,
     LoggerModule,
+    RefreshTokenModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: I18nExceptionFilterPipe,
+    },
   ],
 })
 export class AppModule {}

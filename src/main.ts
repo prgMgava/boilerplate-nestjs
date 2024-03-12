@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import {
   ClassSerializerInterceptor,
   ValidationPipe,
@@ -9,17 +11,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { useContainer } from 'class-validator';
 import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 
 import { shouldCompress } from '@core/compression';
 
 import { AppModule } from './app.module';
 import { AllConfigType } from './config/config.type';
-import LoggerService from './logger/logger.service';
-import { ErrorHandler, ResponseHandler } from './middlewares';
+import { ResponseHandler } from './middlewares';
 import validationOptions from './utils/validation-options';
-
-import 'dotenv/config';
 
 async function bootstrap() {
   const allowedOrigins =
@@ -44,6 +44,7 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
   app.use(helmet());
+  app.use(cookieParser());
   app.use(
     compression({
       filter: shouldCompress,
@@ -56,7 +57,6 @@ async function bootstrap() {
     new ClassSerializerInterceptor(app.get(Reflector)),
     new ResponseHandler(),
   );
-  app.useGlobalFilters(new ErrorHandler(app.get(LoggerService)));
 
   const options = new DocumentBuilder()
     .setTitle('API')

@@ -7,4 +7,6 @@ export type AuthConfig = {
   refreshExpires?: string;
   refreshSecret?: string;
   secret?: string;
+  cookieExpires?: string;
+  isSameSite?: boolean;
 };

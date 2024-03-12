@@ -7,16 +7,17 @@ import {
   HttpStatus,
   Patch,
   Post,
-  Request,
+  Req,
+  Res,
   SerializeOptions,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 
-import { CookieSessionInterceptor } from '@middlewares/CookieSession.interceptor';
+import { UAParser } from 'ua-parser-js';
 
+import { RefreshToken } from '@refresh-token/domain/refresh-token';
 import { User } from '@users/domain/user';
 
 import { NullableType } from '../utils/types/nullable.type';
@@ -27,7 +28,6 @@ import { AuthForgotPasswordDto } from './dto/auth-forgot-password.dto';
 import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 import { AuthResetPasswordDto } from './dto/auth-reset-password.dto';
 import { AuthUpdateDto } from './dto/auth-update.dto';
-import { LoginResponseType } from './types/login-response.type';
 
 @ApiTags('Auth')
 @Controller({
@@ -49,7 +49,7 @@ export class AuthController {
   @Delete('me')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async delete(@Request() request): Promise<void> {
+  public async delete(@Req() request): Promise<void> {
     return this.service.softDelete(request.user);
   }
 
@@ -65,23 +65,41 @@ export class AuthController {
     groups: ['me'],
   })
   @Post('email/login')
-  @HttpCode(HttpStatus.OK)
-  @UseInterceptors(new CookieSessionInterceptor())
-  public login(
+  @HttpCode(HttpStatus.NO_CONTENT)
+  //@UseInterceptors(new CookieSessionInterceptor())
+  public async login(
     @Body() loginDto: AuthEmailLoginDto,
-  ): Promise<LoginResponseType> {
-    return this.service.validateLogin(loginDto);
+    @Req() req,
+    @Res({ passthrough: true }) res,
+  ): Promise<void> {
+    const ua = UAParser(req.headers['user-agent']);
+    const refreshTokenPayload: Partial<RefreshToken> = {
+      browser: ua.browser.name,
+      ip: req.ip,
+      os: ua.os.name,
+      userAgent: JSON.stringify(ua),
+    };
+    const cookiePayload = await this.service.validateLogin(
+      loginDto,
+      refreshTokenPayload,
+    );
+    res.setHeader('Set-Cookie', cookiePayload);
   }
 
   @ApiCookieAuth()
   @Post('logout')
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(new CookieSessionInterceptor())
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async logout(@Request() request): Promise<void> {
-    await this.service.logout({
-      sessionId: request.user.sessionId,
-    });
+  public async logout(
+    @Req() req,
+    @Res({ passthrough: true }) response,
+  ): Promise<void> {
+    const cookie = req.cookies['Refresh'];
+    response.setHeader('Set-Cookie', this.service.getCookieForLogOut());
+    const refreshCookie = req.cookies['Refresh'];
+    if (refreshCookie) {
+      await this.service.revokeRefreshToken(cookie);
+    }
   }
 
   @ApiCookieAuth()
@@ -91,7 +109,7 @@ export class AuthController {
   @Get('me')
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
-  public me(@Request() request): Promise<NullableType<User>> {
+  public me(@Req() request): Promise<NullableType<User>> {
     return this.service.me(request.user);
   }
 
@@ -100,17 +118,25 @@ export class AuthController {
     groups: ['me'],
   })
   @Post('refresh')
-  @UseGuards(AuthGuard('jwt-refresh'))
-  @UseInterceptors(new CookieSessionInterceptor())
-  @HttpCode(HttpStatus.OK)
-  public refresh(@Request() request): Promise<Omit<LoginResponseType, 'user'>> {
-    return this.service.refreshToken({
-      sessionId: request.user.sessionId,
-    });
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async refresh(
+    @Req() req,
+    @Res({ passthrough: true }) response,
+  ): Promise<void> {
+    try {
+      const cookiePayload =
+        await this.service.createAccessTokenFromRefreshToken(
+          req.cookies['Refresh'],
+        );
+      response.setHeader('Set-Cookie', cookiePayload);
+    } catch (e) {
+      response.setHeader('Set-Cookie', this.service.getCookieForLogOut());
+      return response.sendStatus(HttpStatus.BAD_REQUEST);
+    }
   }
 
   @Post('email/register')
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @HttpCode(HttpStatus.CREATED)
   async register(@Body() createUserDto: AuthRegisterLoginDto): Promise<void> {
     return this.service.register(createUserDto);
   }
@@ -132,7 +158,7 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @HttpCode(HttpStatus.OK)
   public update(
-    @Request() request,
+    @Req() request,
     @Body() userDto: AuthUpdateDto,
   ): Promise<NullableType<User>> {
     return this.service.update(request.user, userDto);
