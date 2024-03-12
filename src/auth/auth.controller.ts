@@ -11,14 +11,11 @@ import {
   Res,
   SerializeOptions,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 
 import { UAParser } from 'ua-parser-js';
-
-import { CookieSessionInterceptor } from '@middlewares/CookieSession.interceptor';
 
 import { RefreshToken } from '@refresh-token/domain/refresh-token';
 import { User } from '@users/domain/user';
@@ -31,7 +28,6 @@ import { AuthForgotPasswordDto } from './dto/auth-forgot-password.dto';
 import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
 import { AuthResetPasswordDto } from './dto/auth-reset-password.dto';
 import { AuthUpdateDto } from './dto/auth-update.dto';
-import { LoginResponseType } from './types/login-response.type';
 
 @ApiTags('Auth')
 @Controller({
@@ -93,19 +89,16 @@ export class AuthController {
   @ApiCookieAuth()
   @Post('logout')
   @UseGuards(AuthGuard('jwt'))
-  @UseInterceptors(new CookieSessionInterceptor())
   @HttpCode(HttpStatus.NO_CONTENT)
-  public async logout(@Req() req, @Res() response): Promise<void> {
-    try {
-      const cookie = req.cookies['Refresh'];
-      response.setHeader('Set-Cookie', this.service.getCookieForLogOut());
-      const refreshCookie = req.cookies['Refresh'];
-      if (refreshCookie) {
-        await this.service.revokeRefreshToken(cookie);
-      }
-      return response.sendStatus(HttpStatus.NO_CONTENT);
-    } catch (e) {
-      return response.sendStatus(HttpStatus.NO_CONTENT);
+  public async logout(
+    @Req() req,
+    @Res({ passthrough: true }) response,
+  ): Promise<void> {
+    const cookie = req.cookies['Refresh'];
+    response.setHeader('Set-Cookie', this.service.getCookieForLogOut());
+    const refreshCookie = req.cookies['Refresh'];
+    if (refreshCookie) {
+      await this.service.revokeRefreshToken(cookie);
     }
   }
 
@@ -125,20 +118,17 @@ export class AuthController {
     groups: ['me'],
   })
   @Post('refresh')
-  //@UseGuards(AuthGuard('jwt-refresh'))
-  @UseInterceptors(new CookieSessionInterceptor())
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.NO_CONTENT)
   public async refresh(
     @Req() req,
-    @Res() response,
-  ): Promise<Omit<LoginResponseType, 'user'>> {
+    @Res({ passthrough: true }) response,
+  ): Promise<void> {
     try {
       const cookiePayload =
         await this.service.createAccessTokenFromRefreshToken(
           req.cookies['Refresh'],
         );
       response.setHeader('Set-Cookie', cookiePayload);
-      return response.status(HttpStatus.NO_CONTENT).json({});
     } catch (e) {
       response.setHeader('Set-Cookie', this.service.getCookieForLogOut());
       return response.sendStatus(HttpStatus.BAD_REQUEST);

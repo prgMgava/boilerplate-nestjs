@@ -127,6 +127,7 @@ export class AuthService {
 
       userId = jwtData.confirmEmailUserId;
     } catch {
+      throw new CustomHttpException();
       throw new HttpException(
         {
           errors: {

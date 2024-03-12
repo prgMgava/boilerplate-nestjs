@@ -54,7 +54,11 @@ export class RefreshTokenService {
    */
   async decodeRefreshToken(token: string): Promise<RefreshTokenInterface> {
     try {
-      return await this.jwt.verifyAsync(token);
+      return await this.jwt.verifyAsync(token, {
+        secret: this.configService.getOrThrow('auth.secret', {
+          infer: true,
+        }),
+      });
     } catch (e) {
       if (e instanceof TokenExpiredError) {
         throw new CustomHttpException(
@@ -81,9 +85,16 @@ export class RefreshTokenService {
     const opts: SignOptions = {
       subject: String(user.id),
     };
-    return this.jwt.signAsync({
-      ...opts,
-    });
+    return this.jwt.signAsync(
+      {
+        ...opts,
+      },
+      {
+        secret: this.configService.getOrThrow('auth.secret', {
+          infer: true,
+        }),
+      },
+    );
   }
 
   /**

@@ -7,13 +7,10 @@ import {
   Req,
   Res,
   SerializeOptions,
-  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { UAParser } from 'ua-parser-js';
-
-import { CookieSessionInterceptor } from '@middlewares/CookieSession.interceptor';
 
 import { RefreshToken } from '@refresh-token/domain/refresh-token';
 
@@ -37,7 +34,6 @@ export class AuthGoogleController {
     groups: ['me'],
   })
   @Post('login')
-  @UseInterceptors(new CookieSessionInterceptor())
   @HttpCode(HttpStatus.OK)
   async login(
     @Body() loginDto: AuthGoogleLoginDto,
