@@ -27,5 +27,7 @@
   "roleNotExists": "Cargo não existe",
   "statusNotExists": "Status não existe",
   "emailNotFound": "Email não encontrado",
-  "needLoginViaProvider": "Login provider inválido"
+  "needLoginViaProvider": "Login provider inválido",
+  "oldPasswordRequired": "Senha anterior é obrigatória",
+  "userNotFound": "Usuário não encontrado"
 }

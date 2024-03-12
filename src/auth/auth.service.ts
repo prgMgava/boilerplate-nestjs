@@ -9,6 +9,7 @@ import { ExceptionTitleList } from '@common/constants/exception-title-list.const
 import { StatusCodesList } from '@common/constants/status-codes-list.constants';
 import { AllConfigType } from '@config/config.type';
 import { CustomHttpException } from '@exception/custom-http.exception';
+import { NotFoundException } from '@exception/not-found.exception';
 
 import { MailService } from '@mail/mail.service';
 
@@ -349,7 +350,7 @@ export class AuthService {
       throw new CustomHttpException(
         ExceptionTitleList.InvalidRefreshToken,
         HttpStatus.PRECONDITION_FAILED,
-        StatusCodesList.InvalidRefreshToken,
+        StatusCodesList.UnprocessableEntity,
       );
     }
   }
@@ -364,14 +365,10 @@ export class AuthService {
   ): Promise<NullableType<User>> {
     if (userDto.password) {
       if (!userDto.oldPassword) {
-        throw new HttpException(
-          {
-            errors: {
-              oldPassword: 'missingOldPassword',
-            },
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
+        throw new CustomHttpException(
+          ExceptionTitleList.OldPasswordRequired,
+          HttpStatus.BAD_REQUEST,
+          StatusCodesList.BadRequest,
         );
       }
 
@@ -380,26 +377,17 @@ export class AuthService {
       });
 
       if (!currentUser) {
-        throw new HttpException(
-          {
-            errors: {
-              user: 'userNotFound',
-            },
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-          },
-          HttpStatus.UNPROCESSABLE_ENTITY,
+        throw new NotFoundException(
+          ExceptionTitleList.UserNotFound,
+          HttpStatus.NOT_FOUND,
         );
       }
 
       if (!currentUser.password) {
-        throw new HttpException(
-          {
-            errors: {
-              oldPassword: 'incorrectOldPassword',
-            },
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-          },
+        throw new CustomHttpException(
+          ExceptionTitleList.IncorrectOldPassword,
           HttpStatus.UNPROCESSABLE_ENTITY,
+          StatusCodesList.UnprocessableEntity,
         );
       }
 
@@ -409,14 +397,10 @@ export class AuthService {
       );
 
       if (!isValidOldPassword) {
-        throw new HttpException(
-          {
-            errors: {
-              oldPassword: 'incorrectOldPassword',
-            },
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-          },
+        throw new CustomHttpException(
+          ExceptionTitleList.IncorrectOldPassword,
           HttpStatus.UNPROCESSABLE_ENTITY,
+          StatusCodesList.UnprocessableEntity,
         );
       } else {
         await this.sessionService.softDelete({

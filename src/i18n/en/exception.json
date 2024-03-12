@@ -27,5 +27,7 @@
   "roleNotExists": "Role not exists",
   "statusNotExists": "Status not exists",
   "emailNotFound": "Email not found",
-  "needLoginViaProvider": "Need login via provider"
+  "needLoginViaProvider": "Need login via provider",
+  "oldPasswordRequired": "Old password required",
+  "userNotFound": "User not found"
 }

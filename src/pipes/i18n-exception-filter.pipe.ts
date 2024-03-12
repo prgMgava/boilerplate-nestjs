@@ -57,7 +57,11 @@ export class I18nExceptionFilterPipe implements ExceptionFilter {
         }
       }
       let errorMessage = 'internalError';
-      if (exceptionResponse.message instanceof Array) {
+      if (exception.name === 'BadRequestException') {
+        errorMessage = `internalError-${JSON.stringify({
+          error: exception.message,
+        })}`;
+      } else if (exceptionResponse.message instanceof Array) {
         errorMessage = exceptionResponse.message[0];
       } else if (typeof exceptionResponse.message === 'string') {
         errorMessage = exceptionResponse.message;
@@ -69,15 +73,12 @@ export class I18nExceptionFilterPipe implements ExceptionFilter {
       }
 
       const { title, argument } = this.checkIfConstraintAvailable(errorMessage);
-      exceptionResponse.message = await this.i18n.translate(
-        `exception.${title}`,
-        {
-          lang,
-          args: {
-            ...argument,
-          },
+      exceptionResponse.message = this.i18n.translate(`exception.${title}`, {
+        lang,
+        args: {
+          ...argument,
         },
-      );
+      });
       return exceptionResponse;
     } catch (error) {
       this.logger.error('Error in I18nExceptionFilterPipe');
@@ -89,7 +90,7 @@ export class I18nExceptionFilterPipe implements ExceptionFilter {
     argument: Record<string, any>;
   } {
     try {
-      const splitObject = message.split('-');
+      const splitObject = message.split(/-(.*)/s);
       if (!splitObject[1]) {
         return {
           title: splitObject[0],

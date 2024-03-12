@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 
 import bcrypt from 'bcryptjs';
 
@@ -137,14 +137,10 @@ export class UsersService {
       });
 
       if (userObject?.id !== id) {
-        throw new HttpException(
-          {
-            errors: {
-              email: 'emailAlreadyExists',
-            },
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-          },
+        throw new CustomHttpException(
+          ExceptionTitleList.EmailAlreadyExists,
           HttpStatus.UNPROCESSABLE_ENTITY,
+          StatusCodesList.UnprocessableEntity,
         );
       }
     }
@@ -154,14 +150,10 @@ export class UsersService {
         id: clonedPayload.photo.id,
       });
       if (!fileObject) {
-        throw new HttpException(
-          {
-            errors: {
-              photo: 'imageNotExists',
-            },
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-          },
+        throw new CustomHttpException(
+          ExceptionTitleList.ImageNotExists,
           HttpStatus.UNPROCESSABLE_ENTITY,
+          StatusCodesList.UnprocessableEntity,
         );
       }
     }
@@ -171,14 +163,10 @@ export class UsersService {
         clonedPayload.role.id,
       );
       if (!roleObject) {
-        throw new HttpException(
-          {
-            errors: {
-              role: 'roleNotExists',
-            },
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-          },
+        throw new CustomHttpException(
+          ExceptionTitleList.RoleNotExists,
           HttpStatus.UNPROCESSABLE_ENTITY,
+          StatusCodesList.UnprocessableEntity,
         );
       }
     }
@@ -188,14 +176,10 @@ export class UsersService {
         clonedPayload.status.id,
       );
       if (!statusObject) {
-        throw new HttpException(
-          {
-            errors: {
-              status: 'statusNotExists',
-            },
-            status: HttpStatus.UNPROCESSABLE_ENTITY,
-          },
+        throw new CustomHttpException(
+          ExceptionTitleList.StatusNotExists,
           HttpStatus.UNPROCESSABLE_ENTITY,
+          StatusCodesList.UnprocessableEntity,
         );
       }
     }
