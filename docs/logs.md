@@ -1,9 +1,3 @@
-<https://github.com/InnovA2/winston-pg>
-
-create multiples db
-
-TODO: test
-
 # Logs
 
 ## Table of Contents <!-- omit in toc -->
@@ -57,3 +51,5 @@ Winston provide multiples custom transport. We are using LogTail that store only
    ```
 
 Previous: [Automatic update of dependencies](automatic-update-dependencies.md)
+
+Next: [Commits](commits.md)
