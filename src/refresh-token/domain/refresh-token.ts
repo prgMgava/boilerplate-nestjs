@@ -7,11 +7,11 @@ export class RefreshToken {
 
   expires: Date;
 
-  id: number;
+  id: number | string;
 
   ip?: string;
 
-  isRevoked: boolean;
+  isRevoked?: boolean;
 
   os?: string;
 

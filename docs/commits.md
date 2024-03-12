@@ -46,6 +46,8 @@ The commit contains the following structural elements:
 
 Commits not are available in main branch.
 
+**_Pay attention_**: this rule can be skiped using '--no-verify' in the end of your commit. To grants more efficient and stronger rule to protect branch use [Git Hub protect branch](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/managing-a-branch-protection-rule) rules instead.
+
 ### Examples
 
 ```mermaid
