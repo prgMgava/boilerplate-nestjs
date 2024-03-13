@@ -71,7 +71,7 @@ export default registerAs<AppConfig>('app', () => {
       ? parseInt(process.env.APP_PORT, 10)
       : process.env.PORT
         ? parseInt(process.env.PORT, 10)
-        : 3000,
+        : 3456,
     workingDirectory: process.env.PWD || process.cwd(),
   };
 });
