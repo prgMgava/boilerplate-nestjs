@@ -25,7 +25,6 @@ export class RefreshTokenSchemaClass extends EntityDocumentHelper {
 
   @Prop({
     type: String,
-    unique: true,
   })
   browser?: string;
 
