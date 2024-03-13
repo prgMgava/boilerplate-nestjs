@@ -107,7 +107,7 @@ export class RefreshTokenService {
     refreshToken: Partial<RefreshToken>,
   ): Promise<string> {
     const tokePayload = {} as RefreshToken;
-    tokePayload.userId = user.id as number;
+    tokePayload.userId = user.id;
     tokePayload.isRevoked = false;
     tokePayload.ip = refreshToken.ip;
     tokePayload.userAgent = refreshToken.userAgent;
