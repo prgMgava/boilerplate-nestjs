@@ -61,7 +61,6 @@ export class RefreshTokensRelationalRepository
     });
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-
     await this.refreshTokensRepository.update(id, updatedEntity);
 
     return RefreshTokenMapper.toDomain(updatedEntity);
