@@ -34,10 +34,15 @@ Frontend (React, Next.js): TODO: remote front end repo
 - [x] Admin and User roles.
 - [x] Internationalization/Translations (I18N) ([nestjs-i18n](https://www.npmjs.com/package/nestjs-i18n)).
 - [x] File uploads. Support local and Amazon S3 drivers.
-- [x] Swagger.
-- [x] E2E and units tests.
+- [x] [Swagger](https://docs.nestjs.com/openapi/introduction).
+- [x] E2E and units tests using [Jest](https://jestjs.io/).
 - [x] Docker.
+- [x] Logging: using [winston](https://github.com/winstonjs/winston).
 - [x] CI (Github Actions).
+- [x] Integrated ESLint, Prettier and Husky
+- [x] Followed SOLID Principles
+- [x] Authentication and authorization: Cookie-based session
+- [x] Compression: gzip compression with [compression](https://github.com/expressjs/compression)
 
 ## Contributors
 
