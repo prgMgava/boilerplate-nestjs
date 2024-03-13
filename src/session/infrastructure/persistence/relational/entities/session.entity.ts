@@ -23,7 +23,7 @@ export class SessionEntity extends EntityRelationalHelper implements Session {
   deletedAt: Date;
 
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number | string;
 
   @ManyToOne(() => UserEntity, {
     eager: true,

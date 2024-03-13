@@ -48,21 +48,20 @@ export class RefreshTokensRelationalRepository
     payload: Partial<RefreshToken>,
   ): Promise<RefreshToken> {
     const entity = await this.refreshTokensRepository.findOne({
-      where: { id: Number(id) },
+      where: { id: id },
     });
 
     if (!entity) {
       throw new Error('User not found');
     }
 
-    const updatedEntity = await this.refreshTokensRepository.save(
-      this.refreshTokensRepository.create(
-        RefreshTokenMapper.toPersistence({
-          ...RefreshTokenMapper.toDomain(entity),
-          ...payload,
-        }),
-      ),
-    );
+    const updatedEntity = RefreshTokenMapper.toPersistence({
+      ...RefreshTokenMapper.toDomain(entity),
+      ...payload,
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    await this.refreshTokensRepository.update(id, updatedEntity);
 
     return RefreshTokenMapper.toDomain(updatedEntity);
   }

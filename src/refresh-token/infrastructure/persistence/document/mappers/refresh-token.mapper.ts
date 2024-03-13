@@ -21,9 +21,7 @@ export class RefreshTokenMapper {
 
   static toPersistence(refreshToken: RefreshToken): RefreshTokenSchemaClass {
     const userEntity = new RefreshTokenSchemaClass();
-    if (refreshToken.id && typeof refreshToken.id === 'string') {
-      userEntity._id = refreshToken.id;
-    }
+    userEntity._id = refreshToken.id;
     userEntity.browser = refreshToken.browser;
     userEntity.ip = refreshToken.ip;
     userEntity.expires = refreshToken.expires;

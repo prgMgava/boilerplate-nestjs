@@ -18,12 +18,10 @@ export class SessionMapper {
 
   static toPersistence(session: Session): SessionEntity {
     const user = new UserEntity();
-    user.id = Number(session.user.id);
+    user.id = session.user.id;
 
     const sessionEntity = new SessionEntity();
-    if (session.id && typeof session.id === 'number') {
-      sessionEntity.id = session.id;
-    }
+    sessionEntity.id = session.id;
     sessionEntity.user = user;
     sessionEntity.createdAt = session.createdAt;
     sessionEntity.deletedAt = session.deletedAt;

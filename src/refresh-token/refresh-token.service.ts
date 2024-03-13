@@ -107,7 +107,7 @@ export class RefreshTokenService {
     refreshToken: Partial<RefreshToken>,
   ): Promise<string> {
     const tokePayload = {} as RefreshToken;
-    tokePayload.userId = user.id as number;
+    tokePayload.userId = user.id;
     tokePayload.isRevoked = false;
     tokePayload.ip = refreshToken.ip;
     tokePayload.userAgent = refreshToken.userAgent;
@@ -147,7 +147,7 @@ export class RefreshTokenService {
   async getStoredTokenFromRefreshTokenPayload(
     payload: RefreshTokenInterface,
   ): Promise<RefreshToken | null> {
-    const tokenId = payload.jwtid;
+    const tokenId = payload.jwtid.toString();
 
     if (!tokenId) {
       throw new CustomHttpException(
@@ -208,14 +208,14 @@ export class RefreshTokenService {
    * @param userId
    */
   async revokeRefreshTokenById(
-    id: number | string,
-    userId: number,
+    id: string,
+    userId: string,
   ): Promise<RefreshToken> {
     const token = await this.refreshTokenRepository.findOne({ id });
     if (!token) {
       throw new NotFoundException();
     }
-    if (token.userId !== userId) {
+    if (token.userId != userId) {
       throw new ForbiddenException();
     }
     token.isRevoked = true;

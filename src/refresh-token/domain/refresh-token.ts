@@ -7,7 +7,7 @@ export class RefreshToken {
 
   expires: Date;
 
-  id: number | string;
+  id: string;
 
   ip?: string;
 
@@ -18,5 +18,5 @@ export class RefreshToken {
   updatedAt: Date;
 
   userAgent?: string;
-  userId: number;
+  userId: string;
 }

@@ -65,7 +65,7 @@ Switching between TypeORM and Mongoose is implemented based on the [Dependency I
    npm run start:dev
    ```
 
-1. Open <http://localhost:3000>
+1. Open <http://localhost:3456>
 
 ---
 
@@ -110,7 +110,7 @@ Switching between TypeORM and Mongoose is implemented based on the [Dependency I
    npm run start:dev
    ```
 
-1. Open <http://localhost:3000>
+1. Open <http://localhost:3456>
 
 ---
 
@@ -143,7 +143,7 @@ If you want quick run your app, you can use following commands:
    docker compose logs
    ```
 
-1. Open <http://localhost:3000>
+1. Open <http://localhost:3456>
 
 ## Quick run (MongoDB + Mongoose)
 
@@ -174,13 +174,13 @@ If you want quick run your app, you can use following commands:
    docker compose -f docker-compose.document.yaml logs
    ```
 
-1. Open <http://localhost:3000>
+1. Open <http://localhost:3456>
 
 ---
 
 ## Links
 
-- Swagger (API docs): <http://localhost:3000/docs>
+- Swagger (API docs): <http://localhost:3456/docs>
 - Adminer (client for DB): <http://localhost:8080>
 - MongoDB Express (client for DB): <http://localhost:8081/>
 - Maildev: <http://localhost:1080>
