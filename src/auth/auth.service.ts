@@ -170,7 +170,8 @@ export class AuthService {
       await this.refreshTokenService.createAccessTokenFromRefreshToken(
         refreshToken,
       );
-    return this.buildResponsePayload(token);
+    await this.revokeRefreshToken(refreshToken);
+    return this.buildResponsePayload(token, refreshToken);
   }
 
   async forgotPassword(email: string): Promise<void> {
@@ -243,7 +244,7 @@ export class AuthService {
     });
   }
 
-  async register(dto: AuthRegisterLoginDto): Promise<void> {
+  async register(dto: AuthRegisterLoginDto): Promise<User> {
     const user = await this.usersService.create({
       ...dto,
       email: dto.email,
@@ -275,6 +276,8 @@ export class AuthService {
       },
       to: dto.email,
     });
+
+    return user;
   }
 
   async resetPassword(hash: string, password: string): Promise<void> {
@@ -367,8 +370,8 @@ export class AuthService {
       if (!userDto.oldPassword) {
         throw new CustomHttpException(
           ExceptionTitleList.OldPasswordRequired,
-          HttpStatus.BAD_REQUEST,
-          StatusCodesList.BadRequest,
+          HttpStatus.UNPROCESSABLE_ENTITY,
+          StatusCodesList.UnprocessableEntity,
         );
       }
 
