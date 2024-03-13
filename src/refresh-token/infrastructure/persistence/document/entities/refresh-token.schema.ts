@@ -47,7 +47,7 @@ export class RefreshTokenSchemaClass extends EntityDocumentHelper {
   userAgent?: string;
 
   @Prop()
-  userId: number;
+  userId: string;
 
   @Prop({ default: now })
   updatedAt: Date;

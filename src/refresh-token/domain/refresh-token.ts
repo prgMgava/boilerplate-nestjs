@@ -18,5 +18,5 @@ export class RefreshToken {
   updatedAt: Date;
 
   userAgent?: string;
-  userId: number;
+  userId: string;
 }

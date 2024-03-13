@@ -14,5 +14,5 @@ export class EntityDocumentHelper {
       toPlainOnly: true,
     },
   )
-  public _id: string;
+  public _id: string | number;
 }
