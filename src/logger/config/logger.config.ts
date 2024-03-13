@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 
-import { Logtail } from '@logtail/node';
-import { LogtailTransport } from '@logtail/winston';
+//import { Logtail } from '@logtail/node';
+//import { LogtailTransport } from '@logtail/winston';
 import { createLogger, format, transports } from 'winston';
 import DailyRotateFile from 'winston-daily-rotate-file';
 
@@ -43,16 +43,16 @@ export const loadLoggerConfig = (config: ConfigService) => {
     zippedArchive: true,
   });
 
-  const fileRotateTransportCombined = new DailyRotateFile({
-    datePattern: 'YYYY-MM-DD',
-    dirname: './logs/combined',
-    filename: `log-%DATE%.log`,
-    maxFiles: process.env.LOG_MAX_DAYS || '14d',
-    maxSize: process.env.LOG_MAX_SIZE || '20m',
-    zippedArchive: true,
-  });
+  // const fileRotateTransportCombined = new DailyRotateFile({
+  //   datePattern: 'YYYY-MM-DD',
+  //   dirname: './logs/combined',
+  //   filename: `log-%DATE%.log`,
+  //   maxFiles: process.env.LOG_MAX_DAYS || '14d',
+  //   maxSize: process.env.LOG_MAX_SIZE || '20m',
+  //   zippedArchive: true,
+  // });
 
-  const logTail = logTailTransport(fileRotateTransportCombined);
+  //const logTail = logTailTransport(fileRotateTransportCombined);
 
   return createLogger({
     format: combine(
@@ -64,20 +64,20 @@ export const loadLoggerConfig = (config: ConfigService) => {
       new transports.Console({}),
       fileRotateTransportError,
       fileRotateTransportInfo,
-      new LogtailTransport(logTail, { level: 'error' }),
+      // new LogtailTransport(logTail, { level: 'error' }),
     ],
   });
 };
 
-const logTailTransport = (
-  fileRotateTransportCombined: DailyRotateFile,
-): Logtail => {
-  // Checkout the docs #logs.md for more information
-  const logTail = new Logtail(process.env.LOG_TAIL_TOKEN as string);
+// const logTailTransport = (
+//   fileRotateTransportCombined: DailyRotateFile,
+// ): Logtail => {
+//   // Checkout the docs #logs.md for more information
+//   const logTail = new Logtail(process.env.LOG_TAIL_TOKEN as string);
 
-  fileRotateTransportCombined.on('new', async () => {
-    await logTail.flush();
-  });
+//   fileRotateTransportCombined.on('new', async () => {
+//     await logTail.flush();
+//   });
 
-  return logTail;
-};
+//   return logTail;
+// };
