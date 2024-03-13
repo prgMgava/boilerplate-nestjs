@@ -1,6 +1,6 @@
 services:
   mongo:
-    image: mongo:7.0.5
+    image: mongo:7.0.6
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DATABASE_USERNAME}
@@ -26,3 +26,5 @@ services:
     build:
       context: .
       dockerfile: document.e2e.Dockerfile
+    env_file:
+      - env-example-document

@@ -86,10 +86,7 @@ export class UsersRelationalRepository implements UserRepository {
       ...payload,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { previousPassword, ...clonedUpdatedEntity } = updatedEntity;
-
-    await this.usersRepository.update(id, clonedUpdatedEntity);
+    await this.usersRepository.update(id, updatedEntity);
 
     return UserMapper.toDomain(updatedEntity);
   }
