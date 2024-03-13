@@ -147,7 +147,7 @@ export class RefreshTokenService {
   async getStoredTokenFromRefreshTokenPayload(
     payload: RefreshTokenInterface,
   ): Promise<RefreshToken | null> {
-    const tokenId = payload.jwtid;
+    const tokenId = payload.jwtid.toString();
 
     if (!tokenId) {
       throw new CustomHttpException(
@@ -208,8 +208,8 @@ export class RefreshTokenService {
    * @param userId
    */
   async revokeRefreshTokenById(
-    id: string | number,
-    userId: number | string,
+    id: string,
+    userId: string,
   ): Promise<RefreshToken> {
     const token = await this.refreshTokenRepository.findOne({ id });
     if (!token) {

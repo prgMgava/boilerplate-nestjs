@@ -35,7 +35,7 @@ export class RefreshTokenEntity
   expires: Date;
 
   @PrimaryGeneratedColumn()
-  id: number | string;
+  id: string;
 
   @Column()
   ip?: string;
@@ -58,5 +58,5 @@ export class RefreshTokenEntity
   userAgent?: string;
 
   @Column()
-  userId: string | number;
+  userId: string;
 }

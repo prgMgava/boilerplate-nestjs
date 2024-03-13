@@ -14,7 +14,7 @@ export class User {
 
   firstName: null | string;
 
-  id: number | string;
+  id: string;
 
   lastName: null | string;
   @Exclude({ toPlainOnly: true })
