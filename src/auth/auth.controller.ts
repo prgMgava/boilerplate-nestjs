@@ -123,21 +123,17 @@ export class AuthController {
     @Req() req,
     @Res({ passthrough: true }) response,
   ): Promise<void> {
-    try {
-      const cookiePayload =
-        await this.service.createAccessTokenFromRefreshToken(
-          req.cookies['Refresh'],
-        );
-      response.setHeader('Set-Cookie', cookiePayload);
-    } catch (e) {
-      response.setHeader('Set-Cookie', this.service.getCookieForLogOut());
-      return response.sendStatus(HttpStatus.BAD_REQUEST);
-    }
+    const cookiePayload = await this.service.createAccessTokenFromRefreshToken(
+      req.cookies['Refresh'],
+    );
+    response.setHeader('Set-Cookie', cookiePayload);
   }
 
   @Post('email/register')
   @HttpCode(HttpStatus.CREATED)
-  async register(@Body() createUserDto: AuthRegisterLoginDto): Promise<void> {
+  async register(
+    @Body() createUserDto: AuthRegisterLoginDto,
+  ): Promise<NullableType<User>> {
     return this.service.register(createUserDto);
   }
 

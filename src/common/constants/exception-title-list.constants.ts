@@ -10,7 +10,7 @@ export enum ExceptionTitleList {
   InvalidRefreshToken = 'invalidRefreshToken',
   NeedLoginViaProvider = 'needLoginViaProvider',
   NotFound = 'Not Found',
-  OldPasswordRequired = 'oldPAsswordRequired',
+  OldPasswordRequired = 'oldPasswordRequired',
   RefreshTokenExpired = 'refreshTokenExpired',
   RoleNotExists = 'roleNotExists',
   StatusNotExists = 'statusNotExists',
