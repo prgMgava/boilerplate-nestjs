@@ -35,7 +35,7 @@ export class RefreshTokenEntity
   expires: Date;
 
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number | string;
 
   @Column()
   ip?: string;

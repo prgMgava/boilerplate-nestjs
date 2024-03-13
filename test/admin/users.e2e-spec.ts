@@ -45,7 +45,10 @@ describe('Users Module', () => {
         return request(app)
           .patch(`/api/v1/users/${newUserFirst.id}`)
           .set('Cookie', authCookie)
-          .send({ password: newUserChangedPassword })
+          .send({
+            password: newUserChangedPassword,
+            oldPassword: newUserPassword,
+          })
           .expect(200);
       });
 

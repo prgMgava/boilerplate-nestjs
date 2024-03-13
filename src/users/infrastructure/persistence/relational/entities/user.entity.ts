@@ -44,7 +44,7 @@ export class UserEntity extends EntityRelationalHelper implements User {
   firstName: null | string;
 
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number | string;
 
   @Index()
   @Column({ nullable: true, type: String })

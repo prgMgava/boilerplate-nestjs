@@ -74,21 +74,22 @@ export class UsersRelationalRepository implements UserRepository {
 
   async update(id: User['id'], payload: Partial<User>): Promise<User> {
     const entity = await this.usersRepository.findOne({
-      where: { id: Number(id) },
+      where: { id: id },
     });
 
     if (!entity) {
       throw new Error('User not found');
     }
 
-    const updatedEntity = await this.usersRepository.save(
-      this.usersRepository.create(
-        UserMapper.toPersistence({
-          ...UserMapper.toDomain(entity),
-          ...payload,
-        }),
-      ),
-    );
+    const updatedEntity = UserMapper.toPersistence({
+      ...UserMapper.toDomain(entity),
+      ...payload,
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { previousPassword, ...clonedUpdatedEntity } = updatedEntity;
+
+    await this.usersRepository.update(id, clonedUpdatedEntity);
 
     return UserMapper.toDomain(updatedEntity);
   }

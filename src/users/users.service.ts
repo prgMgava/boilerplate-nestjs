@@ -136,7 +136,7 @@ export class UsersService {
         email: clonedPayload.email,
       });
 
-      if (userObject?.id !== id) {
+      if (userObject && userObject?.id !== id) {
         throw new CustomHttpException(
           ExceptionTitleList.EmailAlreadyExists,
           HttpStatus.UNPROCESSABLE_ENTITY,
