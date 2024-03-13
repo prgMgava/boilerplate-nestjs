@@ -208,14 +208,14 @@ export class RefreshTokenService {
    * @param userId
    */
   async revokeRefreshTokenById(
-    id: number | string,
-    userId: number,
+    id: string | number,
+    userId: number | string,
   ): Promise<RefreshToken> {
     const token = await this.refreshTokenRepository.findOne({ id });
     if (!token) {
       throw new NotFoundException();
     }
-    if (token.userId !== userId) {
+    if (token.userId != userId) {
       throw new ForbiddenException();
     }
     token.isRevoked = true;

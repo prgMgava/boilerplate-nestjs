@@ -58,5 +58,5 @@ export class RefreshTokenEntity
   userAgent?: string;
 
   @Column()
-  userId: string;
+  userId: string | number;
 }

@@ -22,9 +22,7 @@ export class RefreshTokenMapper {
 
   static toPersistence(refreshToken: RefreshToken): RefreshTokenEntity {
     const refreshTokenEntity = new RefreshTokenEntity();
-    if (refreshToken.id && typeof refreshToken.id === 'number') {
-      refreshTokenEntity.id = refreshToken.id;
-    }
+    refreshTokenEntity.id = refreshToken.id;
     refreshTokenEntity.browser = refreshToken.browser;
     refreshTokenEntity.expires = refreshToken.expires;
     refreshTokenEntity.ip = refreshToken.ip;
